@@ -43,6 +43,7 @@ public class Join extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
 	    throws ServletException, IOException, UnsupportedEncodingException, ClassNotFoundException, NamingException, SQLException, Exception {
+        response.setContentType("application/json");
 	String email = request.getParameter("email");
 	String password = request.getParameter("password");
 	String displayName = request.getParameter("display_name");
@@ -50,8 +51,8 @@ public class Join extends HttpServlet {
 
 	FormValidator validator = new FormValidator();
 	validator.validators.put("email", new EmailValidator());
-	validator.validators.put("password", new DisplayNameValidator());
-	validator.validators.put("display_name", new PasswordValidator());
+	validator.validators.put("password", new PasswordValidator());
+	validator.validators.put("display_name", new DisplayNameValidator());
 
 	Hashtable<String, String> errors = validator.validate(request.getParameterMap());
 	if (errors.size() > 0) {

@@ -18,7 +18,7 @@ public class FormValidator {
     }
     public Hashtable<String, String> validate(Map<String, String[]> fields) {
 	Hashtable<String, String> result = new Hashtable<String, String>();
-	for (String key: fields.keySet()) {
+	for (String key: validators.keySet()) {
 	    if (!validators.get(key).validate(fields.get(key))) {
 		result.put(key, validators.get(key).getErrorMessage());
 	    }
