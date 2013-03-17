@@ -58,7 +58,7 @@ public class Login extends HttpServlet {
 	Hashtable<String, String> errors = validator.validate(request.getParameterMap());
 
 	if (errors.size() > 0) {
-	    JSONResponse jsonResponse = new JSONResponse(1, gson.toJson(errors));
+	    JSONResponse jsonResponse = new JSONResponse(1, errors);
 	    response.getWriter().write(jsonResponse.toString());
 	} else {
 	    User user = UserModule.getUserRepository().getUserByCredentials(email, password);

@@ -1,0 +1,1 @@
+INSERT INTO `friendship` (`owner`, `target`) VALUES (?, ?);
