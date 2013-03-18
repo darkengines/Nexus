@@ -12,7 +12,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import javax.naming.NamingException;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -131,5 +133,21 @@ public class UserRepository extends Repository<User> {
 	ps.close();
 	connection.close();
 	return user;
+    }
+
+    public ArrayList searchByEmail(String[] words) throws UnsupportedEncodingException, IOException, ClassNotFoundException, NamingException, SQLException {
+	ArrayList<User> users = new ArrayList();
+	String query = getQuery("search_by_email.sql", true);
+	Connection connection = Database.getConnection();
+	PreparedStatement ps = connection.prepareStatement(query);
+	ps.setString(1, StringUtils.join(words, "|"));
+	ResultSet resultSet = ps.executeQuery();
+	while (resultSet.next()) {
+	    users.add(map(resultSet)); 
+	}
+	resultSet.close();
+	ps.close();
+	connection.close();
+	return users;
     }
 }

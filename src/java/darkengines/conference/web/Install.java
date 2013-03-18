@@ -4,6 +4,7 @@
  */
 package darkengines.conference.web;
 
+import darkengines.friendship.FriendshipModule;
 import darkengines.session.SessionModule;
 import darkengines.user.UserModule;
 import java.io.IOException;
@@ -41,6 +42,7 @@ public class Install extends HttpServlet {
 	try {
 	    UserModule.getUserRepository().install();
 	    SessionModule.getSessionRepository().install();
+	    FriendshipModule.getFriendshipRepository().install();
 	} finally {	    
 	    out.close();
 	}

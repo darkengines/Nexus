@@ -7,11 +7,17 @@ package darkengines.nexus;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import darkengines.friendship.Friendship;
+import darkengines.friendship.FriendshipModule;
 import darkengines.user.User;
+import darkengines.user.UserModule;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.naming.NamingException;
 
 /**
  *
@@ -130,13 +136,44 @@ public class Nexus {
 		}
 		break;
 	    }
-		case HANGUP: {
+	    case HANGUP: {
 		try {
 		    sendHangUp(socket, json);
 		} catch (IOException ex) {
 		    Logger.getLogger(Nexus.class.getName()).log(Level.SEVERE, null, ex);
 		}
 		break;
+	    }
+	    case SEARCH: {
+		try {
+		    try {
+			sendSearchResult(socket, json);
+		    } catch (UnsupportedEncodingException ex) {
+			Logger.getLogger(Nexus.class.getName()).log(Level.SEVERE, null, ex);
+		    } catch (ClassNotFoundException ex) {
+			Logger.getLogger(Nexus.class.getName()).log(Level.SEVERE, null, ex);
+		    } catch (NamingException ex) {
+			Logger.getLogger(Nexus.class.getName()).log(Level.SEVERE, null, ex);
+		    } catch (SQLException ex) {
+			Logger.getLogger(Nexus.class.getName()).log(Level.SEVERE, null, ex);
+		    }
+		} catch (IOException ex) {
+		    Logger.getLogger(Nexus.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		break;
+	    }
+	    case MAKE_FRIEND: {
+	    try {
+		makeFriend(socket, json);
+	    } catch (IOException ex) {
+		Logger.getLogger(Nexus.class.getName()).log(Level.SEVERE, null, ex);
+	    } catch (ClassNotFoundException ex) {
+		Logger.getLogger(Nexus.class.getName()).log(Level.SEVERE, null, ex);
+	    } catch (NamingException ex) {
+		Logger.getLogger(Nexus.class.getName()).log(Level.SEVERE, null, ex);
+	    } catch (SQLException ex) {
+		Logger.getLogger(Nexus.class.getName()).log(Level.SEVERE, null, ex);
+	    }
 	    }
 	    default: {
 
@@ -257,6 +294,7 @@ public class Nexus {
 	NexusMessage message = new NexusMessage(NexusMessageType.OFFER, json);
 	target.getSession().getRemote().sendString(new Gson().toJson(message));
     }
+
     private void sendAnswer(NexusWebSocket socket, JsonElement json) throws IOException {
 	Offer offer = gson.fromJson(json, Offer.class);
 	NexusWebSocket target = null;
@@ -281,7 +319,7 @@ public class Nexus {
 	    target.getSession().getRemote().sendString(gson.toJson(message));
 	}
     }
-    
+
     private NexusWebSocket findSocketByUserId(long id) {
 	NexusWebSocket result = null;
 	int size = sockets.size();
@@ -291,5 +329,26 @@ public class Nexus {
 	    }
 	}
 	return result;
+    }
+
+    private void sendSearchResult(NexusWebSocket socket, JsonElement json) throws UnsupportedEncodingException, IOException, ClassNotFoundException, ClassNotFoundException, NamingException, SQLException {
+	String raw = gson.fromJson(json, String.class);
+	if (raw.length() > 2) {
+	    ArrayList<User> result = UserModule.getUserRepository().searchByEmail(raw.split(" "));
+	    ArrayList<UserItem> items = new ArrayList<UserItem>();
+	    for (User user: result) {
+		items.add(new UserItem(user));
+	    }
+	    NexusMessage message = new NexusMessage();
+	    message.setType(NexusMessageType.SEARCH);
+	    message.setData(gson.toJsonTree(items));
+	    socket.getSession().getRemote().sendString(gson.toJson(message));
+	}
+    }
+
+    private void makeFriend(NexusWebSocket socket, JsonElement json) throws UnsupportedEncodingException, IOException, ClassNotFoundException, NamingException, SQLException {
+	long target = gson.fromJson(json, Long.class);
+	Friendship friendship = new Friendship(socket.getSocketUser().getId(), target);
+	FriendshipModule.getFriendshipRepository().insertFriendship(friendship);
     }
 }

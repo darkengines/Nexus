@@ -20,7 +20,9 @@ public enum NexusMessageType {
     ICE_CANDIDATE(0x6),
     OFFER(0x7),
     ANSWER(0x8),
-    HANGUP(0x9);
+    HANGUP(0x9),
+    SEARCH(0x10),
+    MAKE_FRIEND(0x11);
     
     private int code;
 
