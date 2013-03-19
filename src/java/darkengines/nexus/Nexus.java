@@ -7,12 +7,16 @@ package darkengines.nexus;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import darkengines.core.database.Database;
+import darkengines.core.database.Repository;
 import darkengines.friendship.Friendship;
 import darkengines.friendship.FriendshipModule;
 import darkengines.user.User;
 import darkengines.user.UserModule;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -163,21 +167,34 @@ public class Nexus {
 		break;
 	    }
 	    case MAKE_FRIEND: {
-	    try {
-		makeFriend(socket, json);
-	    } catch (IOException ex) {
-		Logger.getLogger(Nexus.class.getName()).log(Level.SEVERE, null, ex);
-	    } catch (ClassNotFoundException ex) {
-		Logger.getLogger(Nexus.class.getName()).log(Level.SEVERE, null, ex);
-	    } catch (NamingException ex) {
-		Logger.getLogger(Nexus.class.getName()).log(Level.SEVERE, null, ex);
-	    } catch (SQLException ex) {
-		Logger.getLogger(Nexus.class.getName()).log(Level.SEVERE, null, ex);
-	    }
+		try {
+		    makeFriend(socket, json);
+		} catch (IOException ex) {
+		    Logger.getLogger(Nexus.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (ClassNotFoundException ex) {
+		    Logger.getLogger(Nexus.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (NamingException ex) {
+		    Logger.getLogger(Nexus.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (SQLException ex) {
+		    Logger.getLogger(Nexus.class.getName()).log(Level.SEVERE, null, ex);
+		}
 	    }
 	    default: {
 
 		break;
+	    }
+	    case GET_FRIENDS: {
+		try {
+		    sendFriends(socket, json);
+		} catch (IOException ex) {
+		    Logger.getLogger(Nexus.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (ClassNotFoundException ex) {
+		    Logger.getLogger(Nexus.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (NamingException ex) {
+		    Logger.getLogger(Nexus.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (SQLException ex) {
+		    Logger.getLogger(Nexus.class.getName()).log(Level.SEVERE, null, ex);
+		}
 	    }
 	}
     }
@@ -336,7 +353,7 @@ public class Nexus {
 	if (raw.length() > 2) {
 	    ArrayList<User> result = UserModule.getUserRepository().searchByEmail(raw.split(" "));
 	    ArrayList<UserItem> items = new ArrayList<UserItem>();
-	    for (User user: result) {
+	    for (User user : result) {
 		items.add(new UserItem(user));
 	    }
 	    NexusMessage message = new NexusMessage();
@@ -350,5 +367,41 @@ public class Nexus {
 	long target = gson.fromJson(json, Long.class);
 	Friendship friendship = new Friendship(socket.getSocketUser().getId(), target);
 	FriendshipModule.getFriendshipRepository().insertFriendship(friendship);
+    }
+
+    private void sendFriends(NexusWebSocket socket, JsonElement json) throws UnsupportedEncodingException, IOException, SQLException, ClassNotFoundException, NamingException {
+	ArrayList<Friend> friends = new ArrayList<Friend>();
+	PreparedStatement ps = Database.getConnection().prepareStatement(Repository.getQuery("get_user_friends.sql", true, this.getClass()));
+	ps.setLong(1, socket.getSocketUser().getId());
+	ResultSet result = ps.executeQuery();
+	while (result.next()) {
+	    Friend friend = Friend.map(result);
+	    NexusWebSocket friendSocket = findSocketByUserId(friend.getId());
+	    friend.setOnline(friendSocket != null);
+	    friends.add(friend);
+	}
+	NexusMessage message = new NexusMessage();
+	message.setType(NexusMessageType.GET_FRIENDS);
+	message.setData(gson.toJsonTree(friends));
+	socket.getSession().getRemote().sendString(gson.toJson(message));
+    }
+
+    private void sendOnlineFriend(User user) throws IOException, SQLException, ClassNotFoundException, NamingException {
+	Friend friend = new Friend();
+	friend.setId(user.getId());
+	friend.setEmail(user.getEmail());
+	friend.setDisplayName(user.getDisplayName());
+	friend.setOnline(true);
+	PreparedStatement ps = Database.getConnection().prepareStatement(Repository.getQuery("get_user_reverse_friends.sql", true, this.getClass()));
+	ps.setLong(1, user.getId());
+	ResultSet result = ps.executeQuery();
+	NexusMessage message = new NexusMessage();
+	message.setType(NexusMessageType.ONLINE_FRIEND);
+	while (result.next()) {
+	    NexusWebSocket friendSocket = findSocketByUserId(result.getLong("id"));
+	    friend.setReverseFriendship(result.getBoolean("reverse_friendship"));
+	    message.setData(gson.toJsonTree(friend));
+	    friendSocket.getSession().getRemote().sendString(gson.toJson(message));
+	}
     }
 }

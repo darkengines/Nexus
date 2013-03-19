@@ -22,7 +22,8 @@ public enum NexusMessageType {
     ANSWER(0x8),
     HANGUP(0x9),
     SEARCH(0x10),
-    MAKE_FRIEND(0x11);
+    MAKE_FRIEND(0x11),
+    GET_FRIENDS(0x12), ONLINE_FRIEND;
     
     private int code;
 
