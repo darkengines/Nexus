@@ -57,7 +57,15 @@ public class Nexus {
 	sockets.add(socket);
 	if (!found) {
 	    try {
-		sendOnlineUser(socket.getSocketUser());
+                try {
+                    sendOnlineFriend(socket.getSocketUser());
+                } catch (SQLException ex) {
+                    Logger.getLogger(Nexus.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(Nexus.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (NamingException ex) {
+                    Logger.getLogger(Nexus.class.getName()).log(Level.SEVERE, null, ex);
+                }
 	    } catch (IOException ex) {
 		Logger.getLogger(Nexus.class.getName()).log(Level.SEVERE, null, ex);
 	    }
@@ -68,7 +76,17 @@ public class Nexus {
 
 	sockets.remove(socket);
 	try {
-	    sendOfflineUser(socket.getSocketUser());
+            try {
+                sendOfflineFriend(socket.getSocketUser());
+            } catch (UnsupportedEncodingException ex) {
+                Logger.getLogger(Nexus.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException ex) {
+                Logger.getLogger(Nexus.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(Nexus.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (NamingException ex) {
+                Logger.getLogger(Nexus.class.getName()).log(Level.SEVERE, null, ex);
+            }
 	} catch (IOException ex) {
 	    Logger.getLogger(Nexus.class.getName()).log(Level.SEVERE, null, ex);
 	}
@@ -397,6 +415,25 @@ public class Nexus {
 	ResultSet result = ps.executeQuery();
 	NexusMessage message = new NexusMessage();
 	message.setType(NexusMessageType.ONLINE_FRIEND);
+	while (result.next()) {
+	    NexusWebSocket friendSocket = findSocketByUserId(result.getLong("id"));
+	    friend.setReverseFriendship(result.getBoolean("reverse_friendship"));
+	    message.setData(gson.toJsonTree(friend));
+	    friendSocket.getSession().getRemote().sendString(gson.toJson(message));
+	}
+    }
+    
+    private void sendOfflineFriend(User user) throws UnsupportedEncodingException, SQLException, IOException, ClassNotFoundException, NamingException {
+        Friend friend = new Friend();
+	friend.setId(user.getId());
+	friend.setEmail(user.getEmail());
+	friend.setDisplayName(user.getDisplayName());
+	friend.setOnline(true);
+	PreparedStatement ps = Database.getConnection().prepareStatement(Repository.getQuery("get_user_reverse_friends.sql", true, this.getClass()));
+	ps.setLong(1, user.getId());
+	ResultSet result = ps.executeQuery();
+	NexusMessage message = new NexusMessage();
+	message.setType(NexusMessageType.OFFLINE_FRIEND);
 	while (result.next()) {
 	    NexusWebSocket friendSocket = findSocketByUserId(result.getLong("id"));
 	    friend.setReverseFriendship(result.getBoolean("reverse_friendship"));
