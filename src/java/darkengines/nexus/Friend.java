@@ -15,7 +15,6 @@ public class Friend {
     private long id;
     private String displayName;
     private String email;
-    private boolean reverseFriendship;
     private boolean online;
 
     public static Friend map(ResultSet resultSet) throws SQLException {
@@ -23,7 +22,6 @@ public class Friend {
 	friend.setId(resultSet.getLong("id"));
 	friend.setDisplayName(resultSet.getString("display_name"));
 	friend.setEmail(resultSet.getString("email"));
-	friend.setReverseFriendship(resultSet.getBoolean("reverse_friendship"));
 	return friend;
     }
     
@@ -53,13 +51,6 @@ public class Friend {
 
     public void setEmail(String email) {
 	this.email = email;
-    }
-     public boolean isReverseFriendship() {
-	return reverseFriendship;
-    }
-
-    public void setReverseFriendship(boolean reverseFriendship) {
-	this.reverseFriendship = reverseFriendship;
     }
     
     public void setOnline(boolean online) {

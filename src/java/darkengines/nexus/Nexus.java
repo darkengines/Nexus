@@ -417,7 +417,6 @@ public class Nexus {
 	message.setType(NexusMessageType.ONLINE_FRIEND);
 	while (result.next()) {
 	    NexusWebSocket friendSocket = findSocketByUserId(result.getLong("id"));
-	    friend.setReverseFriendship(result.getBoolean("reverse_friendship"));
 	    message.setData(gson.toJsonTree(friend));
 	    friendSocket.getSession().getRemote().sendString(gson.toJson(message));
 	}
@@ -436,7 +435,6 @@ public class Nexus {
 	message.setType(NexusMessageType.OFFLINE_FRIEND);
 	while (result.next()) {
 	    NexusWebSocket friendSocket = findSocketByUserId(result.getLong("id"));
-	    friend.setReverseFriendship(result.getBoolean("reverse_friendship"));
 	    message.setData(gson.toJsonTree(friend));
 	    friendSocket.getSession().getRemote().sendString(gson.toJson(message));
 	}
