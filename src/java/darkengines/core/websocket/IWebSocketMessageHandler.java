@@ -14,6 +14,6 @@ import org.eclipse.jetty.websocket.api.Session;
  */
 public interface IWebSocketMessageHandler {
 
-    void processMessage(User user, Session session, JsonElement data);
+    public void processMessage(User user, WebSocket webSocket, JsonElement data);
     
 }

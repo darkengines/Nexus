@@ -24,9 +24,10 @@ public class WebSocketFactory implements WebSocketCreator {
     private WebSocketConnectedEventListener connectedSocketEventListener;
     private WebSocketDisconnectedEventListener disconnectedSocketEventListener;
     private WebSocketMessageEventListener receivedMessageSocketEventListener;
-    public WebSocketFactory(WebSocketManager webSocketManager) {
+    public WebSocketFactory(WebSocketManager webSocketManager, WebSocketMessageManager messageManager) {
 	connectedSocketEventListener = new WebSocketConnectedEventListener(webSocketManager);
 	disconnectedSocketEventListener = new WebSocketDisconnectedEventListener(webSocketManager);
+        receivedMessageSocketEventListener = new WebSocketMessageEventListener(webSocketManager, messageManager);
     }
     @Override
     public Object createWebSocket(UpgradeRequest req, UpgradeResponse resp) {
@@ -40,7 +41,7 @@ public class WebSocketFactory implements WebSocketCreator {
 			WebSocket socket = new WebSocket(user);
 			socket.connectedSocket.addListener(connectedSocketEventListener);
 			socket.disconnectedSocket.addListener(disconnectedSocketEventListener);
-			socket.disconnectedSocket.addListener(disconnectedSocketEventListener);
+			socket.receivedMessage.addListener(receivedMessageSocketEventListener);
 			return socket;
 		    }
 		}

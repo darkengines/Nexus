@@ -18,7 +18,7 @@ class WebSocketConnectedEventListener implements IListener<WebSocketConnectedEve
 
     @Override
     public void callback(Object sender, WebSocketConnectedEventArgs eventArgs) {
-	webSocketManager.addSocket(eventArgs.getUser(), eventArgs.getSession());
+	webSocketManager.addSocket(eventArgs.getUser(), eventArgs.getWebSocket());
     }
         
 }

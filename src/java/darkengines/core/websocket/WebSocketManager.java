@@ -17,30 +17,30 @@ import org.eclipse.jetty.websocket.api.Session;
  * @author Quicksort
  */
 public class WebSocketManager {
-    private HashMap<Long, HashMap<Integer, Session>> webSockets;
+    private HashMap<Long, HashMap<Integer, WebSocket>> webSockets;
     public EventHandler<WebSocketConnectedEventArgs> connect;
     public EventHandler<WebSocketDisconnectedEventArgs> disconnect;
     
     public WebSocketManager() {
-	webSockets = new HashMap<Long, HashMap<Integer, Session>>();
+	webSockets = new HashMap<Long, HashMap<Integer, WebSocket>>();
 	connect = new EventHandler<WebSocketConnectedEventArgs>();
 	disconnect = new EventHandler<WebSocketDisconnectedEventArgs>();
     }
     
-    public void addSocket(User user, Session session) {
+    public void addSocket(User user, WebSocket webSocket) {
 	if (!webSockets.containsKey(user.getId())) {
-	    webSockets.put(user.getId(), new HashMap<Integer, Session>());
+	    webSockets.put(user.getId(), new HashMap<Integer, WebSocket>());
 	    //User connection
 	}
-	HashMap<Integer, Session> userSockets = webSockets.get(user.getId());
-	userSockets.put(session.hashCode(), session);
+	HashMap<Integer, WebSocket> userSockets = webSockets.get(user.getId());
+	userSockets.put(webSocket.hashCode(), webSocket);
     }
     
-    public void removeSocket(User user, Session session) {
+    public void removeSocket(User user, WebSocket webSocket) {
 	if (webSockets.containsKey(user.getId())) {
-	    HashMap<Integer, Session> userSockets = webSockets.get(user.getId());
-	    if (userSockets.containsKey(session.hashCode())) {
-		userSockets.remove(session.hashCode());
+	    HashMap<Integer, WebSocket> userSockets = webSockets.get(user.getId());
+	    if (userSockets.containsKey(webSocket.hashCode())) {
+		userSockets.remove(webSocket.hashCode());
 		if (userSockets.isEmpty()) {
 		    webSockets.remove(user.getId());
 		    //User disconnection
@@ -49,24 +49,24 @@ public class WebSocketManager {
 	}
     }
     
-    public Collection<Session> getUserSessions(User user) {
+    public Collection<WebSocket> getUserSessions(User user) {
 	return webSockets.get(user.getId()).values();
     }
     
-    public Session getUserSession(User user, Integer sessionHash) {
+    public WebSocket getUserSession(User user, Integer sessionHash) {
 	return webSockets.get(user.getId()).get(sessionHash);
     }
     
-    public Collection<Session> getUsersSessions(Collection<User> users) {
-	ArrayList<Session> sessions = new ArrayList<Session>();
+    public Collection<WebSocket> getUsersSessions(Collection<User> users) {
+	ArrayList<WebSocket> sessions = new ArrayList<WebSocket>();
 	for (User user: users) {
 	    sessions.addAll(getUserSessions(user));
 	}
 	return sessions;
     }
     
-    public Collection<Session> getUsersSession(Collection<Pair<User, Integer>> pairs) {
-	ArrayList<Session> sessions = new ArrayList<Session>();
+    public Collection<WebSocket> getUsersSession(Collection<Pair<User, Integer>> pairs) {
+	ArrayList<WebSocket> sessions = new ArrayList<WebSocket>();
 	for (Pair<User, Integer> pair: pairs) {
 	    sessions.add(getUserSession(pair.getLeft(), pair.getRight()));
 	}

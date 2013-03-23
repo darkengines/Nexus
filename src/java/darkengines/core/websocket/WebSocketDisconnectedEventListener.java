@@ -18,6 +18,6 @@ class WebSocketDisconnectedEventListener implements IListener<WebSocketDisconnec
 
     @Override
     public void callback(Object sender, WebSocketDisconnectedEventArgs eventArgs) {
-	webSocketManager.addSocket(eventArgs.getUser(), eventArgs.getSession());
+	webSocketManager.addSocket(eventArgs.getUser(), eventArgs.getWebSocket());
     }
 }

@@ -13,11 +13,11 @@ import org.eclipse.jetty.websocket.api.Session;
  */
 class WebSocketConnectedEventArgs {
     private User user;
-    private Session session;
+    private WebSocket webSocket;
 
-    public WebSocketConnectedEventArgs(User user, Session session) {
+    public WebSocketConnectedEventArgs(User user, WebSocket webSocket) {
 	this.user = user;
-	this.session = session;
+	this.webSocket = webSocket;
     }
     
     public User getUser() {
@@ -28,11 +28,11 @@ class WebSocketConnectedEventArgs {
 	this.user = user;
     }
 
-    public Session getSession() {
-	return session;
+    public WebSocket getWebSocket() {
+	return webSocket;
     }
 
-    private void setSession(Session session) {
-	this.session = session;
+    private void setWebSocket(WebSocket webSocket) {
+	this.webSocket = webSocket;
     }
 }

@@ -5,7 +5,6 @@
 package darkengines.core.websocket;
 
 import darkengines.user.User;
-import org.eclipse.jetty.websocket.api.Session;
 
 /**
  *
@@ -13,11 +12,11 @@ import org.eclipse.jetty.websocket.api.Session;
  */
 class WebSocketDisconnectedEventArgs {
     private User user;
-    private Session session;
+    private WebSocket webSocket;
 
-    public WebSocketDisconnectedEventArgs(User user, Session session) {
+    public WebSocketDisconnectedEventArgs(User user, WebSocket webSocket) {
 	this.user = user;
-	this.session = session;
+	this.webSocket = webSocket;
     }
     
     public User getUser() {
@@ -28,11 +27,11 @@ class WebSocketDisconnectedEventArgs {
 	this.user = user;
     }
 
-    public Session getSession() {
-	return session;
+    public WebSocket getWebSocket() {
+	return webSocket;
     }
 
-    private void setSession(Session session) {
-	this.session = session;
+    private void setWebSocket(WebSocket webSocket) {
+	this.webSocket = webSocket;
     }
 }

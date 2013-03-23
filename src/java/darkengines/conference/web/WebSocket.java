@@ -6,10 +6,10 @@ package darkengines.conference.web;
 
 import darkengines.core.websocket.WebSocketFactory;
 import darkengines.core.websocket.WebSocketManager;
-import darkengines.nexus.NexusWebSocket;
+import darkengines.core.websocket.WebSocketMessageManager;
+import darkengines.core.websocket.WebSocketMessageType;
+import darkengines.core.websocket.messagehandler.GetFriends;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.websocket.servlet.WebSocketServlet;
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 
@@ -20,17 +20,19 @@ import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 public class WebSocket extends WebSocketServlet {
     
     private WebSocketManager webSocketManager;
-    
+    private WebSocketMessageManager webSocketMessageManager;
     @Override
     public void init() throws ServletException {
 	super.init();
 	webSocketManager = new WebSocketManager();
+        webSocketMessageManager = new WebSocketMessageManager();
+        webSocketMessageManager.registerMessageHandler(WebSocketMessageType.GET_FRIENDS, new GetFriends(webSocketManager));
     }
     
     @Override
     public void configure(WebSocketServletFactory wssf) {
 	wssf.getPolicy().setIdleTimeout(10000);
-	wssf.setCreator(new WebSocketFactory(webSocketManager));
+	wssf.setCreator(new WebSocketFactory(webSocketManager, webSocketMessageManager));
     }
   
 }

@@ -20,6 +20,6 @@ class WebSocketMessageEventListener implements IListener<WebSocketMessageEventAr
 
     @Override
     public void callback(Object sender, WebSocketMessageEventArgs eventArgs) {
-	messageManager.processMessage(eventArgs.getUser(), eventArgs.getSession(), eventArgs.getMessage());
+	messageManager.processMessage(eventArgs.getUser(), eventArgs.getWebSocket(), eventArgs.getMessage());
     }
 }
