@@ -9,6 +9,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import darkengines.core.database.Database;
 import darkengines.core.database.Repository;
+import darkengines.core.websocket.WebSocketHandler;
 import darkengines.friendship.Friendship;
 import darkengines.friendship.FriendshipModule;
 import darkengines.user.User;
@@ -32,7 +33,33 @@ public class Nexus {
     private static Nexus instance = null;
     protected ArrayList<NexusWebSocket> sockets = null;
     protected Gson gson = null;
+    
+    protected WebSocketHandler webSocketHandler;
 
+    public ArrayList<NexusWebSocket> getSockets() {
+	return sockets;
+    }
+
+    public void setSockets(ArrayList<NexusWebSocket> sockets) {
+	this.sockets = sockets;
+    }
+
+    public Gson getGson() {
+	return gson;
+    }
+
+    public void setGson(Gson gson) {
+	this.gson = gson;
+    }
+
+    public WebSocketHandler getWebSocketHandler() {
+	return webSocketHandler;
+    }
+
+    public void setWebSocketHandler(WebSocketHandler webSocketHandler) {
+	this.webSocketHandler = webSocketHandler;
+    }
+    
     protected Nexus() {
 	GsonBuilder gsonBuilder = new GsonBuilder();
 	gsonBuilder.registerTypeAdapter(NexusMessage.class, new NexusMessageDeserializer());
@@ -95,8 +122,14 @@ public class Nexus {
     public void processMessage(NexusWebSocket socket, String message) {
 	NexusMessage nexusMessage = gson.fromJson(message, NexusMessage.class);
 	NexusMessageType type = nexusMessage.getType();
-	JsonElement json = nexusMessage.getData();
-
+	JsonElement data = nexusMessage.getData();
+	
+	for (NexusMessageType enumType: NexusMessageType.values()) {
+	    if (type == enumType) {
+		
+	    }
+	}
+	
 	switch (type) {
 	    case KEEP_ALIVE: {
 

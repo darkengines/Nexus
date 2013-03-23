@@ -25,10 +25,6 @@ public class NexusWebSocket implements WebSocketListener {
     
     private User socketUser = null;
     private Session session = null;
-    private Long lastPong = null;
-    public Long getLastPong() {
-	return lastPong;
-    }
     
     public Session getSession() {
         return session;
@@ -36,7 +32,6 @@ public class NexusWebSocket implements WebSocketListener {
     
     @Override
     public void onWebSocketBinary(byte[] bytes, int i, int i1) {
-	lastPong = Calendar.getInstance().getTimeInMillis();
 	throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -83,7 +78,6 @@ public class NexusWebSocket implements WebSocketListener {
 
     @Override
     public void onWebSocketText(String string) {
-	lastPong = Calendar.getInstance().getTimeInMillis();
 	Nexus.getInstance().processMessage(this, string);
     }
     public User getSocketUser() {

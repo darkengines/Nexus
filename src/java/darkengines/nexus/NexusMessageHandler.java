@@ -18,7 +18,7 @@ public abstract class NexusMessageHandler {
 	this.sockets = sockets;
     }
     
-    public void _processMessage(JsonElement data) {
+    private void _processMessage(JsonElement data) {
 	synchronized(sockets) {
 	    processMessage(data);
 	}
