@@ -5,13 +5,12 @@
 package darkengines.core.websocket;
 
 import darkengines.user.User;
-import org.eclipse.jetty.websocket.api.Session;
 
 /**
  *
  * @author Quicksort
  */
-class WebSocketConnectedEventArgs {
+public class WebSocketConnectedEventArgs {
     private User user;
     private WebSocket webSocket;
 

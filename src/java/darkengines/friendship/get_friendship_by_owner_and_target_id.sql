@@ -1,0 +1,1 @@
+SELECT `id`, `owner`, `target` FROM `friendship` WHERE `owner` = ? AND `target` = ?;

@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package darkengines.core.websocket.messagehandler;
+package darkengines.conference.websocket.messagehandler.getfriends;
 
 import com.google.gson.JsonElement;
 import darkengines.core.database.Database;
@@ -12,13 +12,11 @@ import darkengines.core.websocket.WebSocket;
 import darkengines.core.websocket.WebSocketManager;
 import darkengines.core.websocket.WebSocketMessage;
 import darkengines.core.websocket.WebSocketMessageType;
-import darkengines.nexus.NexusMessage;
 import darkengines.user.User;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collection;
-import org.eclipse.jetty.websocket.api.Session;
 
 /**
  *
@@ -41,7 +39,7 @@ public class GetFriends implements IWebSocketMessageHandler {
             ResultSet result = ps.executeQuery();
             while (result.next()) {
                 Friend friend = Friend.map(result);
-                Collection<WebSocket> friendSockets = webSocketManager.getUserSessions(user);
+                Collection<WebSocket> friendSockets = webSocketManager.getUserSessions(friend.getId());
                 friend.setOnline(!friendSockets.isEmpty());
                 friends.add(friend);
             }

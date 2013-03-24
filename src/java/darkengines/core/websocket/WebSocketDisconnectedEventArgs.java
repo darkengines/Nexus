@@ -10,7 +10,7 @@ import darkengines.user.User;
  *
  * @author Quicksort
  */
-class WebSocketDisconnectedEventArgs {
+public class WebSocketDisconnectedEventArgs {
     private User user;
     private WebSocket webSocket;
 

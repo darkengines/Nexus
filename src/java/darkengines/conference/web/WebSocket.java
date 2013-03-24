@@ -4,12 +4,15 @@
  */
 package darkengines.conference.web;
 
+import darkengines.conference.websocket.messagehandler.getfriendrequests.GetFriendRequests;
+import darkengines.conference.websocket.eventlistener.UserConnectedEventListener;
+import darkengines.conference.websocket.eventlistener.UserDisconnectedEventListener;
+import darkengines.conference.websocket.messagehandler.getfriends.GetFriends;
+import darkengines.conference.websocket.messagehandler.makefriend.MakeFriend;
 import darkengines.core.websocket.WebSocketFactory;
 import darkengines.core.websocket.WebSocketManager;
 import darkengines.core.websocket.WebSocketMessageManager;
 import darkengines.core.websocket.WebSocketMessageType;
-import darkengines.core.websocket.messagehandler.GetFriends;
-import javax.servlet.ServletException;
 import org.eclipse.jetty.websocket.servlet.WebSocketServlet;
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 
@@ -21,12 +24,23 @@ public class WebSocket extends WebSocketServlet {
     
     private WebSocketManager webSocketManager;
     private WebSocketMessageManager webSocketMessageManager;
-    @Override
-    public void init() throws ServletException {
-	super.init();
+    private UserConnectedEventListener userConnectedEventListener;
+    private UserDisconnectedEventListener userDisconnectedEventListener;
+    
+    public WebSocket() {
+	super();
 	webSocketManager = new WebSocketManager();
         webSocketMessageManager = new WebSocketMessageManager();
+	
+	userConnectedEventListener = new UserConnectedEventListener(webSocketManager);
+	userDisconnectedEventListener = new UserDisconnectedEventListener(webSocketManager);
+	
+	webSocketManager.connectedUser.addListener(userConnectedEventListener);
+	webSocketManager.disconnectedUser.addListener(userDisconnectedEventListener);
+	
         webSocketMessageManager.registerMessageHandler(WebSocketMessageType.GET_FRIENDS, new GetFriends(webSocketManager));
+	webSocketMessageManager.registerMessageHandler(WebSocketMessageType.MAKE_FRIEND, new MakeFriend(webSocketManager));
+	webSocketMessageManager.registerMessageHandler(WebSocketMessageType.GET_FRIEND_REQUESTS, new GetFriendRequests(webSocketManager));
     }
     
     @Override

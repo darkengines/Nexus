@@ -13,7 +13,7 @@ public enum WebSocketMessageType {
     GET_ONLINE_USERS(0x1),
     OFFLINE_USER(0x2),
     ONLINE_USER(0x3), 
-    CHAT_MESSAGE(0x4),
+    CHAT_MESSAGE(0x20),
     CALL_REQUEST(0x4),
     CALL_RESPONSE(0x5),
     ICE_CANDIDATE(0x6),
@@ -22,7 +22,7 @@ public enum WebSocketMessageType {
     HANGUP(0x9),
     SEARCH(0x10),
     MAKE_FRIEND(0x11),
-    GET_FRIENDS(0x12), ONLINE_FRIEND(0x13), OFFLINE_FRIEND(0x14);
+    GET_FRIENDS(0x12), ONLINE_FRIEND(0x13), OFFLINE_FRIEND(0x14), STATE_CHANGED(0x15),GET_FRIEND_REQUESTS(0x16), FRIEND_REQUEST(0x17);
     
     private int code;
 

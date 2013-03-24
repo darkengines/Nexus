@@ -2,8 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package darkengines.nexus;
+package darkengines.conference.websocket.messagehandler.getfriends;
 
+import darkengines.user.User;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -28,7 +29,16 @@ public class Friend {
     public Friend() {
 	
     }
-    
+
+    public Friend(User user, boolean online) {
+	this(user);
+	this.online = online;
+    }
+    public Friend(User user) {
+	id = user.getId();
+	displayName = user.getDisplayName();
+	email = user.getEmail();
+    }
     public long getId() {
 	return id;
     }

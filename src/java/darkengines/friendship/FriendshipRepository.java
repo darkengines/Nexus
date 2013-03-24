@@ -80,6 +80,22 @@ public class FriendshipRepository extends Repository<Friendship> {
 	return friendships;
     }
     
+    public Friendship getFriendshipsByOnwerAndTargetId(long oid, long tid) throws UnsupportedEncodingException, IOException, ClassNotFoundException, NamingException, SQLException {
+	Friendship friendship = null;
+	String query = getQuery("get_friendship_by_owner_and_target_id.sql", true);
+	Connection connection = Database.getConnection();
+	PreparedStatement ps = connection.prepareStatement(query);
+	ps.setObject(1, oid);
+	ps.setObject(2, tid);
+	ResultSet resultSet = ps.executeQuery();
+	if (resultSet.next()) {
+	    friendship = map(resultSet);
+	}
+	resultSet.close();
+	ps.close();
+	connection.close();
+	return friendship;
+    }
     
     public Iterable<Friendship> getFriendshipsByTargetId(long id) throws UnsupportedEncodingException, IOException, ClassNotFoundException, NamingException, SQLException {
 	Collection<Friendship> friendships = new ArrayList<Friendship>();

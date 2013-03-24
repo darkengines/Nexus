@@ -3,7 +3,6 @@
  * and open the template in the editor.
  */
 package darkengines.core.websocket;
-import darkengines.nexus.*;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
