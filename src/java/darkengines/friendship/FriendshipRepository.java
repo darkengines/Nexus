@@ -129,6 +129,23 @@ public class FriendshipRepository extends Repository<Friendship> {
 	return friendship;
     }
     
+     public boolean areFriends(Long a, Long b) throws UnsupportedEncodingException, IOException, ClassNotFoundException, NamingException, SQLException {
+	String query = getQuery("are_friends.sql", true);
+	Connection connection = Database.getConnection();
+	PreparedStatement ps = connection.prepareStatement(query);
+	ps.setObject(1, a);
+        ps.setObject(1, b);
+	ResultSet resultSet = ps.executeQuery();
+        boolean result = false;
+	if (resultSet.next()) {
+	    result = resultSet.getBoolean("are_friends");
+	}
+	resultSet.close();
+	ps.close();
+	connection.close();
+	return result;
+    }
+     
     public Friendship insertFriendship(Friendship friendship) throws UnsupportedEncodingException, IOException, ClassNotFoundException, NamingException, SQLException {
 	String query = getQuery("insert_friendship.sql", true);
 	Connection connection = Database.getConnection();
