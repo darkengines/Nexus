@@ -133,8 +133,10 @@ public class FriendshipRepository extends Repository<Friendship> {
 	String query = getQuery("are_friends.sql", true);
 	Connection connection = Database.getConnection();
 	PreparedStatement ps = connection.prepareStatement(query);
-	ps.setObject(1, a);
-        ps.setObject(1, b);
+	ps.setLong(1, a);
+        ps.setLong(2, b);
+	ps.setLong(3, b);
+        ps.setLong(4, a);
 	ResultSet resultSet = ps.executeQuery();
         boolean result = false;
 	if (resultSet.next()) {

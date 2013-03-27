@@ -14,6 +14,8 @@ import darkengines.core.websocket.WebSocketMessageType;
 import darkengines.friendship.FriendshipModule;
 import darkengines.user.User;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -44,6 +46,7 @@ public class SendChatMessage implements IWebSocketMessageHandler {
                 webSocket.sendMessage(message);
             }
         } catch (Exception e) {
+	    Logger.getLogger(SendChatMessage.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 }
