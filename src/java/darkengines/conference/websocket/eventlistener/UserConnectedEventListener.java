@@ -17,6 +17,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -44,7 +46,7 @@ public class UserConnectedEventListener implements IListener<WebSocketConnectedE
 		}
             }
         } catch (Exception e) {
-            
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
         }
     }
     
