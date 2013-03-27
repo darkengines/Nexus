@@ -17,6 +17,8 @@ import darkengines.friendship.FriendshipModule;
 import darkengines.user.User;
 import darkengines.user.UserModule;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -68,6 +70,7 @@ public class MakeFriend implements IWebSocketMessageHandler {
 		}
 	    }
 	} catch (Exception e) {
+	    Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
 	}
     }
 }

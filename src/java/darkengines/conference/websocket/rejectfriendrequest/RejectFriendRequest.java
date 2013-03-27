@@ -11,6 +11,8 @@ import darkengines.core.websocket.WebSocket;
 import darkengines.friendship.Friendship;
 import darkengines.friendship.FriendshipModule;
 import darkengines.user.User;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -30,7 +32,7 @@ public class RejectFriendRequest implements IWebSocketMessageHandler {
 	    FriendshipModule.getFriendshipRepository().deleteFriendshipById(friendship.getId());
 	}
 	} catch(Exception e) {
-	    
+	    Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
 	}
     }
     

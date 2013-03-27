@@ -18,6 +18,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -41,7 +43,7 @@ public class GetFriendRequests implements IWebSocketMessageHandler {
             }
 	    webSocket.sendMessage(new WebSocketMessage(WebSocketMessageType.GET_FRIEND_REQUESTS, friends));
         } catch (Exception e) {
-            
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
         }
     }
     

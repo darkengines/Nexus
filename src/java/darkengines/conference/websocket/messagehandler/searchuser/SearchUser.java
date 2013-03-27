@@ -15,6 +15,8 @@ import darkengines.core.websocket.WebSocketMessageType;
 import darkengines.user.User;
 import darkengines.user.UserModule;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -44,7 +46,7 @@ public class SearchUser implements IWebSocketMessageHandler {
 	    webSocket.sendMessage(message);
 	}
 	} catch (Exception e) {
-	    
+	    Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
 	}
     }
     

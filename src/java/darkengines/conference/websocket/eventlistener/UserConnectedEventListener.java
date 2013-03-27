@@ -13,6 +13,7 @@ import darkengines.core.websocket.WebSocketConnectedEventArgs;
 import darkengines.core.websocket.WebSocketManager;
 import darkengines.core.websocket.WebSocketMessage;
 import darkengines.core.websocket.WebSocketMessageType;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -31,12 +32,14 @@ public class UserConnectedEventListener implements IListener<WebSocketConnectedE
     }
     @Override
     public void callback(Object sender, WebSocketConnectedEventArgs eventArgs) {
+	Connection connection;
 	try {
 	    Friend localFriend = new Friend(eventArgs.getUser(), true);
 	    WebSocketMessage message = new WebSocketMessage(WebSocketMessageType.STATE_CHANGED, localFriend);
             ArrayList<Friend> friends = new ArrayList<Friend>();
-            PreparedStatement ps = Database.getConnection().prepareStatement(Repository.getQuery("get_user_reverse_friends.sql", true, this.getClass()));
-            ps.setLong(1, eventArgs.getUser().getId());
+            connection = Database.getConnection();
+            PreparedStatement ps = connection.prepareStatement(Repository.getQuery("get_user_reverse_friends.sql", true, this.getClass()));
+	    ps.setLong(1, eventArgs.getUser().getId());
             ResultSet result = ps.executeQuery();
             while (result.next()) {
                 Friend friend = Friend.map(result);
@@ -45,9 +48,13 @@ public class UserConnectedEventListener implements IListener<WebSocketConnectedE
 		    socket.sendMessage(message);
 		}
             }
+	    result.close();
+	    ps.close();
         } catch (Exception e) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
-        }
+        } finally {
+	    connection.close();
+	}
     }
     
 }
