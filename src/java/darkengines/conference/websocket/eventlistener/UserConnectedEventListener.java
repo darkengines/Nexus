@@ -30,37 +30,28 @@ public class UserConnectedEventListener implements IListener<WebSocketConnectedE
     private final WebSocketManager webSocketManager;
 
     public UserConnectedEventListener(WebSocketManager webSocketManager) {
-        this.webSocketManager = webSocketManager;
+	this.webSocketManager = webSocketManager;
     }
 
     @Override
     public void callback(Object sender, WebSocketConnectedEventArgs eventArgs) {
-        Connection connection = null;
-        PreparedStatement ps = null;
-        ResultSet result = null;
-
-        try {
-            connection = Database.getConnection();
-            Friend localFriend = new Friend(eventArgs.getUser(), true);
-            WebSocketMessage message = new WebSocketMessage(WebSocketMessageType.STATE_CHANGED, localFriend);
-            ArrayList<Friend> friends = new ArrayList<Friend>();
-            connection = Database.getConnection();
-            ps = connection.prepareStatement(Repository.getQuery("get_user_reverse_friends.sql", true, this.getClass()));
-            ps.setLong(1, eventArgs.getUser().getId());
-            result = ps.executeQuery();
-            while (result.next()) {
-                Friend friend = Friend.map(result);
-                Collection<WebSocket> friendSockets = webSocketManager.getUserSessions(friend.getId());
-                for (WebSocket socket : friendSockets) {
-                    socket.sendMessage(message);
-                }
-            }
-        } catch (Exception e) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
-        } finally {
-            Database.CloseResultSet(result);
-            Database.CloseStatement(ps);
-            Database.CloseConnection(connection);
-        }
+	try (Connection connection = Database.getConnection()) {
+	    try (PreparedStatement ps = connection.prepareStatement(Repository.getQuery("get_user_reverse_friends.sql", true, this.getClass()))) {
+		ps.setLong(1, eventArgs.getUser().getId());
+		try (ResultSet result = ps.executeQuery()) {
+		    Friend localFriend = new Friend(eventArgs.getUser(), true);
+		    WebSocketMessage message = new WebSocketMessage(WebSocketMessageType.STATE_CHANGED, localFriend);
+		    while (result.next()) {
+			Friend friend = Friend.map(result);
+			Collection<WebSocket> friendSockets = webSocketManager.getUserSessions(friend.getId());
+			for (WebSocket socket : friendSockets) {
+			    socket.sendMessage(message);
+			}
+		    }
+		}
+	    }
+	} catch (Exception e) {
+	    Logger.getLogger(UserConnectedEventListener.class.getName()).log(Level.SEVERE, null, e);
+	}
     }
 }

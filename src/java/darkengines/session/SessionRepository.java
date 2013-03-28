@@ -13,6 +13,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.naming.NamingException;
 
 /**
@@ -22,39 +24,45 @@ import javax.naming.NamingException;
 public class SessionRepository extends Repository<Session> {
 
     @Override
-    public void install() throws UnsupportedEncodingException, IOException, SQLException, ClassNotFoundException, NamingException {
-	String query = getQuery("create_session_table.sql", true);
-	Connection connection = Database.getConnection();
-	PreparedStatement ps = connection.prepareStatement(query);
-	ps.execute();
-	ps.close();
-	connection.close();
+    public void install() {
+	try (Connection connection = Database.getConnection()) {
+	    String query = getQuery("create_session_table.sql", true);
+	    try (PreparedStatement ps = connection.prepareStatement(query)) {
+		ps.execute();
+	    }
+	} catch (Exception e) {
+	    Logger.getLogger(SessionRepository.class.getName()).log(Level.SEVERE, null, e);
+	}
     }
 
     @Override
-    public void reinstall() throws UnsupportedEncodingException, IOException, SQLException, ClassNotFoundException, NamingException {
+    public void reinstall() {
 	uninstall();
 	install();
     }
 
     @Override
-    public void uninstall() throws UnsupportedEncodingException, IOException, SQLException, ClassNotFoundException, NamingException {
-	String query = getQuery("drop_session_table.sql", true);
-	Connection connection = Database.getConnection();
-	PreparedStatement ps = connection.prepareStatement(query);
-	ps.execute();
-	ps.close();
-	connection.close();
+    public void uninstall() {
+	try (Connection connection = Database.getConnection()) {
+	    String query = getQuery("drop_session_table.sql", true);
+	    try (PreparedStatement ps = connection.prepareStatement(query)) {
+		ps.execute();
+	    }
+	} catch (Exception e) {
+	    Logger.getLogger(SessionRepository.class.getName()).log(Level.SEVERE, null, e);
+	}
     }
 
     @Override
-    public void clear() throws UnsupportedEncodingException, IOException, SQLException, ClassNotFoundException, NamingException {
-	String query = getQuery("truncate_session_table.sql", true);
-	Connection connection = Database.getConnection();
-	PreparedStatement ps = connection.prepareStatement(query);
-	ps.execute();
-	ps.close();
-	connection.close();
+    public void clear() {
+	try (Connection connection = Database.getConnection()) {
+	    String query = getQuery("truncate_session_table.sql", true);
+	    try (PreparedStatement ps = connection.prepareStatement(query)) {
+		ps.execute();
+	    }
+	} catch (Exception e) {
+	    Logger.getLogger(SessionRepository.class.getName()).log(Level.SEVERE, null, e);
+	}
     }
 
     @Override
@@ -65,47 +73,53 @@ public class SessionRepository extends Repository<Session> {
 	session.setUuid(UUID.fromString(resultSet.getString("uuid")));
 	return session;
     }
-    
-    public Session insertSession(Session session) throws UnsupportedEncodingException, IOException, ClassNotFoundException, NamingException, SQLException {
-	String query = getQuery("insert_session.sql", true);
-	Connection connection = Database.getConnection();
-	PreparedStatement ps = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
-	ps.setObject(1, session.getUserId());
-	ps.setObject(2, session.getUuid().toString());
-	ps.executeUpdate();
-	ResultSet generatedKeys = ps.getGeneratedKeys();
-	if (generatedKeys.next()) {
-	    session.setId(generatedKeys.getLong(1));
+
+    public Session insertSession(Session session) {
+	try (Connection connection = Database.getConnection()) {
+	    String query = getQuery("insert_session.sql", true);
+	    try (PreparedStatement ps = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)) {
+		ps.setObject(1, session.getUserId());
+		ps.setObject(2, session.getUuid().toString());
+		ps.executeUpdate();
+		try (ResultSet generatedKeys = ps.getGeneratedKeys();) {
+		    if (generatedKeys.next()) {
+			session.setId(generatedKeys.getLong(1));
+		    }
+		}
+	    }
+	} catch (Exception e) {
+	    Logger.getLogger(SessionRepository.class.getName()).log(Level.SEVERE, null, e);
 	}
-	generatedKeys.close();
-	ps.close();
-	connection.close();
 	return session;
     }
-    
-    public void deleteSessionByUuid(UUID uuid) throws UnsupportedEncodingException, IOException, ClassNotFoundException, NamingException, SQLException {
-	String query = getQuery("delete_session_by_uuid.sql", true);
-	Connection connection = Database.getConnection();
-	PreparedStatement ps = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
-	ps.setObject(1, uuid.toString());
-	ps.executeUpdate();
-	ps.close();
-	connection.close();
-    }
-    
-    public Session getSessionByUuid(UUID uuid) throws UnsupportedEncodingException, IOException, ClassNotFoundException, NamingException, SQLException {
-	Session session = null;
-	String query = getQuery("get_session_by_uuid.sql", true);
-	Connection connection = Database.getConnection();
-	PreparedStatement ps = connection.prepareStatement(query);
-	ps.setObject(1, uuid.toString());
-	ResultSet resultSet = ps.executeQuery();
-	if (resultSet.next()) {
-	    session = map(resultSet);
+
+    public void deleteSessionByUuid(UUID uuid) {
+	try (Connection connection = Database.getConnection()) {
+	    String query = getQuery("delete_session_by_uuid.sql", true);
+	    try (PreparedStatement ps = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)) {
+		ps.setObject(1, uuid.toString());
+		ps.executeUpdate();
+	    }
+	} catch (Exception e) {
+	    Logger.getLogger(SessionRepository.class.getName()).log(Level.SEVERE, null, e);
 	}
-	resultSet.close();
-	ps.close();
-	connection.close();
+    }
+
+    public Session getSessionByUuid(UUID uuid) {
+	Session session = null;
+	try (Connection connection = Database.getConnection()) {
+	    String query = getQuery("get_session_by_uuid.sql", true);
+	    try (PreparedStatement ps = connection.prepareStatement(query)) {
+		ps.setObject(1, uuid.toString());
+		try (ResultSet resultSet = ps.executeQuery()) {
+		    if (resultSet.next()) {
+			session = map(resultSet);
+		    }
+		}
+	    }
+	} catch (Exception e) {
+	    Logger.getLogger(SessionRepository.class.getName()).log(Level.SEVERE, null, e);
+	}
 	return session;
     }
 }

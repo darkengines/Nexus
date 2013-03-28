@@ -14,6 +14,7 @@ import darkengines.core.websocket.WebSocketManager;
 import darkengines.core.websocket.WebSocketMessage;
 import darkengines.core.websocket.WebSocketMessageType;
 import darkengines.user.User;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -32,19 +33,19 @@ public class GetFriendRequests implements IWebSocketMessageHandler {
 
     @Override
     public void processMessage(User user, WebSocket webSocket, JsonElement data) {
-	try {
-            ArrayList<Friend> friends = new ArrayList<Friend>();
-            PreparedStatement ps = Database.getConnection().prepareStatement(Repository.getQuery("get_friend_requests.sql", true, this.getClass()));
-            ps.setLong(1, user.getId());
-            ResultSet result = ps.executeQuery();
-            while (result.next()) {
-                Friend friend = Friend.map(result);
-                friends.add(friend);
-            }
-	    webSocket.sendMessage(new WebSocketMessage(WebSocketMessageType.GET_FRIEND_REQUESTS, friends));
-        } catch (Exception e) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
-        }
+	try (Connection connection = Database.getConnection()) {
+	    try (PreparedStatement ps = connection.prepareStatement(Repository.getQuery("get_friend_requests.sql", true, this.getClass()))) {
+		try (ResultSet result = ps.executeQuery()) {
+		    ArrayList<Friend> friends = new ArrayList<Friend>();
+		    while (result.next()) {
+			Friend friend = Friend.map(result);
+			friends.add(friend);
+		    }
+		    webSocket.sendMessage(new WebSocketMessage(WebSocketMessageType.GET_FRIEND_REQUESTS, friends));
+		}
+	    }
+	} catch (Exception e) {
+	    Logger.getLogger(GetFriendRequests.class.getName()).log(Level.SEVERE, null, e);
+	}
     }
-    
 }

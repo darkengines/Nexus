@@ -13,6 +13,7 @@ import darkengines.core.websocket.WebSocketManager;
 import darkengines.core.websocket.WebSocketMessage;
 import darkengines.core.websocket.WebSocketMessageType;
 import darkengines.user.User;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -25,30 +26,32 @@ import java.util.logging.Logger;
  * @author Quicksort
  */
 public class GetFriends implements IWebSocketMessageHandler {
-    
+
     private WebSocketManager webSocketManager;
-    
+
     public GetFriends(WebSocketManager webSocketManager) {
-        this.webSocketManager = webSocketManager;
+	this.webSocketManager = webSocketManager;
     }
-    
+
     @Override
     public void processMessage(User user, WebSocket webSocket, JsonElement data) {
-        try {
-            ArrayList<Friend> friends = new ArrayList<Friend>();
-            PreparedStatement ps = Database.getConnection().prepareStatement(Repository.getQuery("get_user_friends.sql", true, this.getClass()));
-            ps.setLong(1, user.getId());
-            ResultSet result = ps.executeQuery();
-            while (result.next()) {
-                Friend friend = Friend.map(result);
-                Collection<WebSocket> friendSockets = webSocketManager.getUserSessions(friend.getId());
-                friend.setOnline(!friendSockets.isEmpty());
-                friends.add(friend);
-            }
-            WebSocketMessage message = new WebSocketMessage(WebSocketMessageType.GET_FRIENDS, friends);
-            webSocket.sendMessage(message);
-        } catch (Exception e) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
-        }
+	try (Connection connection = Database.getConnection()) {
+	    try (PreparedStatement ps = connection.prepareStatement(Repository.getQuery("get_user_friends.sql", true, this.getClass()))) {
+		ps.setLong(1, user.getId());
+		try (ResultSet result = ps.executeQuery()) {
+		    ArrayList<Friend> friends = new ArrayList<Friend>();
+		    while (result.next()) {
+			Friend friend = Friend.map(result);
+			Collection<WebSocket> friendSockets = webSocketManager.getUserSessions(friend.getId());
+			friend.setOnline(!friendSockets.isEmpty());
+			friends.add(friend);
+		    }
+		    WebSocketMessage message = new WebSocketMessage(WebSocketMessageType.GET_FRIENDS, friends);
+		    webSocket.sendMessage(message);
+		}
+	    }
+	} catch (Exception e) {
+	    Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
+	}
     }
 }
