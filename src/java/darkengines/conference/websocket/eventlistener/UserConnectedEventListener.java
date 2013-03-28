@@ -26,35 +26,41 @@ import java.util.logging.Logger;
  * @author Quicksort
  */
 public class UserConnectedEventListener implements IListener<WebSocketConnectedEventArgs> {
+
     private final WebSocketManager webSocketManager;
+
     public UserConnectedEventListener(WebSocketManager webSocketManager) {
-	this.webSocketManager = webSocketManager;
+        this.webSocketManager = webSocketManager;
     }
+
     @Override
     public void callback(Object sender, WebSocketConnectedEventArgs eventArgs) {
-	Connection connection;
-	try {
-	    Friend localFriend = new Friend(eventArgs.getUser(), true);
-	    WebSocketMessage message = new WebSocketMessage(WebSocketMessageType.STATE_CHANGED, localFriend);
+        Connection connection = null;
+        PreparedStatement ps = null;
+        ResultSet result = null;
+
+        try {
+            connection = Database.getConnection();
+            Friend localFriend = new Friend(eventArgs.getUser(), true);
+            WebSocketMessage message = new WebSocketMessage(WebSocketMessageType.STATE_CHANGED, localFriend);
             ArrayList<Friend> friends = new ArrayList<Friend>();
             connection = Database.getConnection();
-            PreparedStatement ps = connection.prepareStatement(Repository.getQuery("get_user_reverse_friends.sql", true, this.getClass()));
-	    ps.setLong(1, eventArgs.getUser().getId());
-            ResultSet result = ps.executeQuery();
+            ps = connection.prepareStatement(Repository.getQuery("get_user_reverse_friends.sql", true, this.getClass()));
+            ps.setLong(1, eventArgs.getUser().getId());
+            result = ps.executeQuery();
             while (result.next()) {
                 Friend friend = Friend.map(result);
                 Collection<WebSocket> friendSockets = webSocketManager.getUserSessions(friend.getId());
-                for (WebSocket socket: friendSockets) {
-		    socket.sendMessage(message);
-		}
+                for (WebSocket socket : friendSockets) {
+                    socket.sendMessage(message);
+                }
             }
-	    result.close();
-	    ps.close();
         } catch (Exception e) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
         } finally {
-	    connection.close();
-	}
+            Database.CloseResultSet(result);
+            Database.CloseStatement(ps);
+            Database.CloseConnection(connection);
+        }
     }
-    
 }

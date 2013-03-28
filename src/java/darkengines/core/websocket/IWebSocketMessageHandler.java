@@ -6,7 +6,6 @@ package darkengines.core.websocket;
 
 import com.google.gson.JsonElement;
 import darkengines.user.User;
-import org.eclipse.jetty.websocket.api.Session;
 
 /**
  *
