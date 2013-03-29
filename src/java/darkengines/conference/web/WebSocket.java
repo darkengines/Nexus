@@ -11,7 +11,7 @@ import darkengines.conference.websocket.messagehandler.chatmessage.SendChatMessa
 import darkengines.conference.websocket.messagehandler.getfriends.GetFriends;
 import darkengines.conference.websocket.messagehandler.makefriend.MakeFriend;
 import darkengines.conference.websocket.messagehandler.searchuser.SearchUser;
-import darkengines.conference.websocket.rejectfriendrequest.RejectFriendRequest;
+import darkengines.conference.websocket.messagehandler.rejectfriendrequest.RejectFriendRequest;
 import darkengines.core.websocket.WebSocketFactory;
 import darkengines.core.websocket.WebSocketManager;
 import darkengines.core.websocket.WebSocketMessageManager;

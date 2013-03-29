@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package darkengines.conference.websocket.rejectfriendrequest;
+package darkengines.conference.websocket.messagehandler.rejectfriendrequest;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
