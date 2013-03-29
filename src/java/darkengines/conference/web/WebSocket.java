@@ -9,6 +9,7 @@ import darkengines.conference.websocket.eventlistener.UserConnectedEventListener
 import darkengines.conference.websocket.eventlistener.UserDisconnectedEventListener;
 import darkengines.conference.websocket.messagehandler.chatmessage.SendChatMessage;
 import darkengines.conference.websocket.messagehandler.getfriends.GetFriends;
+import darkengines.conference.websocket.messagehandler.getrequestedfriends.GetRequestedFriends;
 import darkengines.conference.websocket.messagehandler.makefriend.MakeFriend;
 import darkengines.conference.websocket.messagehandler.searchuser.SearchUser;
 import darkengines.conference.websocket.messagehandler.rejectfriendrequest.RejectFriendRequest;
@@ -47,7 +48,8 @@ public class WebSocket extends WebSocketServlet {
 	webSocketMessageManager.registerMessageHandler(WebSocketMessageType.SEARCH, new SearchUser(webSocketManager));
 	webSocketMessageManager.registerMessageHandler(WebSocketMessageType.REJECT_FRIEND_REQUEST, new RejectFriendRequest());
 	webSocketMessageManager.registerMessageHandler(WebSocketMessageType.CHAT_MESSAGE, new SendChatMessage(webSocketManager));
-    }
+        webSocketMessageManager.registerMessageHandler(WebSocketMessageType.GET_REQUESTED_FRIENDS, new GetRequestedFriends(webSocketManager));
+    }   
     
     @Override
     public void configure(WebSocketServletFactory wssf) {

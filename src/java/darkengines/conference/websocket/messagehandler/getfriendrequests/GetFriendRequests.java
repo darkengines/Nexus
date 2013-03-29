@@ -35,7 +35,8 @@ public class GetFriendRequests implements IWebSocketMessageHandler {
     public void processMessage(User user, WebSocket webSocket, JsonElement data) {
 	try (Connection connection = Database.getConnection()) {
 	    try (PreparedStatement ps = connection.prepareStatement(Repository.getQuery("get_friend_requests.sql", true, this.getClass()))) {
-		try (ResultSet result = ps.executeQuery()) {
+		ps.setLong(1, user.getId());
+                try (ResultSet result = ps.executeQuery()) {
 		    ArrayList<Friend> friends = new ArrayList<Friend>();
 		    while (result.next()) {
 			Friend friend = Friend.map(result);
