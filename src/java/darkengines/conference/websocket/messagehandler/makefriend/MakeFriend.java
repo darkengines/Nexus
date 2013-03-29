@@ -67,6 +67,9 @@ public class MakeFriend implements IWebSocketMessageHandler {
 		    for (WebSocket socket : friendSockets) {
 			socket.sendMessage(message);
 		    }
+		    message.setType(WebSocketMessageType.FRIEND_REQUESTED);
+		    message.setData(friend);
+		    webSocket.sendMessage(message);
 		}
 	    }
 	} catch (Exception e) {
