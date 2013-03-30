@@ -28,7 +28,9 @@ import java.util.logging.Logger;
  */
 public class GetFriendRequests implements IWebSocketMessageHandler {
 
+    private WebSocketManager manager;
     public GetFriendRequests(WebSocketManager webSocketManager) {
+        this.manager = webSocketManager;
     }
 
     @Override
@@ -40,6 +42,7 @@ public class GetFriendRequests implements IWebSocketMessageHandler {
 		    ArrayList<Friend> friends = new ArrayList<Friend>();
 		    while (result.next()) {
 			Friend friend = Friend.map(result);
+                        friend.setOnline(!manager.getUserSessions(friend.getId()).isEmpty());
 			friends.add(friend);
 		    }
 		    webSocket.sendMessage(new WebSocketMessage(WebSocketMessageType.GET_FRIEND_REQUESTS, friends));
