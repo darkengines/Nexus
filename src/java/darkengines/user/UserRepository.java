@@ -6,8 +6,6 @@ package darkengines.user;
 
 import darkengines.core.database.Database;
 import darkengines.core.database.Repository;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,7 +13,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.naming.NamingException;
 import org.apache.commons.lang3.StringUtils;
 
 /**

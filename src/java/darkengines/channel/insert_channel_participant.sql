@@ -1,0 +1,1 @@
+INSERT INTO channel_participant (channel_id, user_id) VALUES (?, ?);

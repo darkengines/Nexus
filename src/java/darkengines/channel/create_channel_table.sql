@@ -1,0 +1,5 @@
+CREATE  TABLE `channel` (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `name` VARCHAR(64) NOT NULL ,
+  PRIMARY KEY (`id`) ,
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) );

@@ -30,7 +30,7 @@ public enum WebSocketMessageType {
     FRIEND_REQUEST(0x17),
     REJECT_FRIEND_REQUEST(0x18),
     GET_REQUESTED_FRIENDS(0x19),
-    FRIEND_REQUESTED(0x21);
+    FRIEND_REQUESTED(0x21), CHANNEL(0x22);
     
     private int code;
 
