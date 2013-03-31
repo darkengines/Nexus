@@ -70,7 +70,7 @@ public class ChannelInvitationRepository extends Repository<ChannelInvitation>{
 	return channelInvitation;
     }
     
-    public ChannelInvitation insertChannel(ChannelInvitation channelInvitation) {
+    public ChannelInvitation insertChannelInvitation(ChannelInvitation channelInvitation) {
 	try (Connection connection = Database.getConnection()) {
 	    String query = getQuery("insert_channel_invitation.sql", true);
 	    try (PreparedStatement ps = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)) {
