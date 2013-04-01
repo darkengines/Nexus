@@ -88,5 +88,17 @@ public class ChannelInvitationRepository extends Repository<ChannelInvitation>{
 	}
 	return channelInvitation;
     }
+
+    public ChannelInvitation getChannelInvitationByChannelAndUserId(long channelId, long id) {
+	throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    public ChannelInvitation getChannelInvitationById(long invitationId) {
+	throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    public void deleteChannelInvitationById(long invitationId) {
+	throw new UnsupportedOperationException("Not yet implemented");
+    }
     
 }

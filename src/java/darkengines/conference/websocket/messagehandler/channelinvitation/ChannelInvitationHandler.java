@@ -19,7 +19,6 @@ import darkengines.user.UserModule;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -45,8 +44,8 @@ public class ChannelInvitationHandler implements IWebSocketMessageHandler {
 	    darkengines.channel.ChannelInvitation invitation = gson.fromJson(data, darkengines.channel.ChannelInvitation.class);
             String query = Repository.getQuery("get_channel_by_participant_and_channel_id.sql", true, darkengines.channel.ChannelInvitation.class);
             try (PreparedStatement ps = connection.prepareStatement(query)) {
-                ps.setLong(1, invitation.getChannelId());
-                ps.setLong(2, user.getId());
+                ps.setLong(2, invitation.getChannelId());
+                ps.setLong(1, user.getId());
                 try (ResultSet result = ps.executeQuery()) {
                     if (result.next()) {
                        User target = UserModule.getUserRepository().getUserById(invitation.getUserId());
@@ -57,6 +56,9 @@ public class ChannelInvitationHandler implements IWebSocketMessageHandler {
                            for (WebSocket socket: sockets) {
                                socket.sendMessage(message);
                            }
+			   message.setType(WebSocketMessageType.CHANNEL_INVITATION_SENT);
+			   message.setData(target);
+			   webSocket.sendMessage(message);
                        }
                     }
                 }
