@@ -46,9 +46,12 @@ public class Init implements IWebSocketMessageHandler {
 	    try (PreparedStatement getUsersPs = connection.prepareStatement(getUsersQuery)) {
 		getUsersPs.setLong(1, user.getId());
 		getUsersPs.setLong(2, user.getId());
+                getUsersPs.setLong(3, user.getId());
+                getUsersPs.setLong(4, user.getId());
 		try (ResultSet result = getUsersPs.executeQuery()) {
 		    while (result.next()) {
-			id.getUsers().add(UserData.map(result));
+                        UserData ud = UserData.map(result);
+			id.getUsers().put(ud.getId(), ud);
 		    }
 		}
 	    }
@@ -89,7 +92,15 @@ public class Init implements IWebSocketMessageHandler {
 		getFriendRequestPs.setLong(1, user.getId());
 		try (ResultSet result = getFriendRequestPs.executeQuery()) {
 		    while (result.next()) {
-			id.getUsers().
+                        id.getFriendRequests().add(ClientFriendRequest.map(result));
+		    }
+		}
+	    }
+            try (PreparedStatement getRequestedFriendsPs = connection.prepareStatement(getRequestedFriendsQuery)) {
+		getRequestedFriendsPs.setLong(1, user.getId());
+		try (ResultSet result = getRequestedFriendsPs.executeQuery()) {
+		    while (result.next()) {
+                        id.getRequestedFriends().add(ClientFriendRequest.map(result));
 		    }
 		}
 	    }

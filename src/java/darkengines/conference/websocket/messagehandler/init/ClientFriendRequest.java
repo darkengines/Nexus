@@ -13,15 +13,14 @@ import java.sql.SQLException;
  */
 public class ClientFriendRequest {
     private long id;
-    private UserData user;
+    private long userId;
     
-    public ClientFriendRequest(long id, UserData userData) {
+    public ClientFriendRequest(long id, long userId) {
 	this.id = id;
-	this.user = userData;
+	this.userId = userId;
     }
     
     public static ClientFriendRequest map(ResultSet result) throws SQLException {
-	UserData userData = new UserData(result.getLong("user_id"), result.getString("display_name"));
-	return new ClientFriendRequest(result.getLong("id"), userData);
+	return new ClientFriendRequest(result.getLong("id"), result.getLong("user_id"));
     }
 }
