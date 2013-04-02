@@ -1,0 +1,1 @@
+SELECT cp.user_id FROM channel_participant AS cp WHERE cp.channel_id = ?;
