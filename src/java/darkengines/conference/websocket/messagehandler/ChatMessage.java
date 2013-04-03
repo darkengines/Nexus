@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package darkengines.conference.websocket.messagehandler.chatmessage;
+package darkengines.conference.websocket.messagehandler;
 
 /**
  *

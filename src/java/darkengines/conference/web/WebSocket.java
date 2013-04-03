@@ -7,12 +7,14 @@ package darkengines.conference.web;
 import darkengines.conference.websocket.messagehandler.getfriendrequests.GetFriendRequests;
 import darkengines.conference.websocket.eventlistener.UserConnectedEventListener;
 import darkengines.conference.websocket.eventlistener.UserDisconnectedEventListener;
-import darkengines.conference.websocket.messagehandler.chatmessage.SendChatMessage;
+import darkengines.conference.websocket.messagehandler.SendChatMessage;
 import darkengines.conference.websocket.messagehandler.getfriends.GetFriends;
 import darkengines.conference.websocket.messagehandler.getrequestedfriends.GetRequestedFriends;
-import darkengines.conference.websocket.messagehandler.makefriend.MakeFriend;
-import darkengines.conference.websocket.messagehandler.searchuser.SearchUser;
-import darkengines.conference.websocket.messagehandler.rejectfriendrequest.RejectFriendRequest;
+import darkengines.conference.websocket.messagehandler.getuserdata.GetUserData;
+import darkengines.conference.websocket.messagehandler.Init;
+import darkengines.conference.websocket.messagehandler.MakeFriend;
+import darkengines.conference.websocket.messagehandler.SearchUser;
+import darkengines.conference.websocket.messagehandler.RejectFriendRequest;
 import darkengines.core.websocket.WebSocketFactory;
 import darkengines.core.websocket.WebSocketManager;
 import darkengines.core.websocket.WebSocketMessageManager;
@@ -49,6 +51,8 @@ public class WebSocket extends WebSocketServlet {
 	webSocketMessageManager.registerMessageHandler(WebSocketMessageType.REJECT_FRIEND_REQUEST, new RejectFriendRequest());
 	webSocketMessageManager.registerMessageHandler(WebSocketMessageType.CHAT_MESSAGE, new SendChatMessage(webSocketManager));
         webSocketMessageManager.registerMessageHandler(WebSocketMessageType.GET_REQUESTED_FRIENDS, new GetRequestedFriends(webSocketManager));
+	webSocketMessageManager.registerMessageHandler(WebSocketMessageType.INIT, new Init(webSocketManager));
+	webSocketMessageManager.registerMessageHandler(WebSocketMessageType.USER_DATA, new GetUserData(webSocketManager));
     }   
     
     @Override

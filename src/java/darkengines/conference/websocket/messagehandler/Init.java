@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package darkengines.conference.websocket.messagehandler.init;
+package darkengines.conference.websocket.messagehandler;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -11,6 +11,8 @@ import darkengines.core.database.Repository;
 import darkengines.core.websocket.IWebSocketMessageHandler;
 import darkengines.core.websocket.WebSocket;
 import darkengines.core.websocket.WebSocketManager;
+import darkengines.core.websocket.WebSocketMessage;
+import darkengines.core.websocket.WebSocketMessageType;
 import darkengines.user.User;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -39,10 +41,11 @@ public class Init implements IWebSocketMessageHandler {
 	    String getUsersQuery = Repository.getQuery("get_related_users.sql", true, Init.class);
 	    String getChannelsQuery = Repository.getQuery("get_user_channels.sql", true, Init.class);
 	    String getChannelParticipantsQuery = Repository.getQuery("get_channel_participants.sql", true, Init.class);
-	    String getChannelInvitationsQuery = Repository.getQuery("get_channel_invited_users.sql", true, Init.class);
-	    String getChannelInvitedUsersQuery = Repository.getQuery("get_channel_invitations.sql", true, Init.class);
+	    String getChannelInvitationsQuery = Repository.getQuery("get_channel_invitations.sql", true, Init.class);
+	    String getChannelInvitedUsersQuery = Repository.getQuery("get_channel_invited_users.sql", true, Init.class);
 	    String getFriendRequestsQuery = Repository.getQuery("get_friend_requests.sql", true, Init.class);
 	    String getRequestedFriendsQuery = Repository.getQuery("get_requested_friends.sql", true, Init.class);
+	    String getFriendsQuery = Repository.getQuery("get_friends.sql", true, Init.class);
 	    try (PreparedStatement getUsersPs = connection.prepareStatement(getUsersQuery)) {
 		getUsersPs.setLong(1, user.getId());
 		getUsersPs.setLong(2, user.getId());
@@ -51,6 +54,7 @@ public class Init implements IWebSocketMessageHandler {
 		try (ResultSet result = getUsersPs.executeQuery()) {
 		    while (result.next()) {
                         UserData ud = UserData.map(result);
+			ud.setOnline(!manager.getUserSessions(ud.getId()).isEmpty());
 			id.getUsers().put(ud.getId(), ud);
 		    }
 		}
@@ -104,6 +108,16 @@ public class Init implements IWebSocketMessageHandler {
 		    }
 		}
 	    }
+	    try (PreparedStatement getFriendsPs = connection.prepareStatement(getFriendsQuery)) {
+		getFriendsPs.setLong(1, user.getId());
+		try (ResultSet result = getFriendsPs.executeQuery()) {
+		    while (result.next()) {
+                        id.getFriends().add(result.getLong("target"));
+		    }
+		}
+	    }
+	    WebSocketMessage message = new WebSocketMessage(WebSocketMessageType.INIT, id);
+	    webSocket.sendMessage(message);
 	} catch (Exception e) {
 	    Logger.getLogger(Init.class.getName()).log(Level.SEVERE, null, e);
 	}

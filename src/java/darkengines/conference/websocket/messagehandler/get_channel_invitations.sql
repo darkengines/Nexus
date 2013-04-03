@@ -1,0 +1,1 @@
+SELECT ci.id, ci.channel_id FROM channel_invitation AS ci WHERE user_id = ?;

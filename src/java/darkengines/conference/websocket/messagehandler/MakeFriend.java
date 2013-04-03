@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package darkengines.conference.websocket.messagehandler.makefriend;
+package darkengines.conference.websocket.messagehandler;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -63,12 +63,15 @@ public class MakeFriend implements IWebSocketMessageHandler {
 			socket.sendMessage(message);
 		    }
 		} else {
-		    WebSocketMessage message = new WebSocketMessage(WebSocketMessageType.FRIEND_REQUEST, new Friend(user));
+		    FriendRequestData frd = new FriendRequestData(friendship.getId(), new UserData(user.getId(), user.getDisplayName()));
+		    WebSocketMessage message = new WebSocketMessage(WebSocketMessageType.FRIEND_REQUEST, frd);
 		    for (WebSocket socket : friendSockets) {
 			socket.sendMessage(message);
 		    }
+		    frd.getUser().setId(friend.getId());
+		    frd.getUser().setDisplayName(friend.getDisplayName());
 		    message.setType(WebSocketMessageType.FRIEND_REQUESTED);
-		    message.setData(friend);
+		    message.setData(frd);
 		    webSocket.sendMessage(message);
 		}
 	    }

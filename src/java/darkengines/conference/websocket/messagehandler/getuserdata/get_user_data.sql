@@ -1,0 +1,1 @@
+SELECT u.id, u.display_name FROM `user` WHERE u.id = ?;

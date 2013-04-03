@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package darkengines.conference.websocket.messagehandler.init;
+package darkengines.conference.websocket.messagehandler;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,6 +14,7 @@ import java.sql.SQLException;
 public class UserData {
     private long id;
     private String displayName;
+    private boolean online;
     
     public UserData(long id, String displayName) {
 	this.id = id;
@@ -38,4 +39,13 @@ public class UserData {
     public static UserData map(ResultSet result) throws SQLException {
 	return new UserData(result.getLong("id"), result.getString("display_name"));
     }
+
+    public boolean isOnline() {
+	return online;
+    }
+
+    public void setOnline(boolean online) {
+	this.online = online;
+    }
+    
 }
