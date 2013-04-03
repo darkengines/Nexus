@@ -4,6 +4,7 @@
  */
 package darkengines.conference.web;
 
+import darkengines.channel.ChannelModule;
 import darkengines.friendship.FriendshipModule;
 import darkengines.session.SessionModule;
 import darkengines.user.UserModule;
@@ -26,6 +27,9 @@ public class Install extends HttpServlet {
 	    UserModule.getUserRepository().install();
 	    SessionModule.getSessionRepository().install();
 	    FriendshipModule.getFriendshipRepository().install();
+            ChannelModule.getChannelRepository().install();
+            ChannelModule.getChannelParticipantRepository().install();
+            ChannelModule.getChannelInvitationRepository().install();
 	} catch (Exception e) {
 	    Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
 	}

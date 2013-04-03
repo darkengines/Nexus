@@ -80,7 +80,7 @@ public class Init implements IWebSocketMessageHandler {
 				}
 			    }
 			}
-			id.getChannels().add(channelData);
+			id.getChannels().put(channelData.getId(), channelData);
 		    }
 		}
 	    }
@@ -88,7 +88,8 @@ public class Init implements IWebSocketMessageHandler {
 		getChannelInvitationsPs.setLong(1, user.getId());
 		try (ResultSet result = getChannelInvitationsPs.executeQuery()) {
 		    while (result.next()) {
-			id.getChannelInvitations().add(result.getLong("channel_id"));
+                        long channelId = result.getLong("channel_id");
+			id.getChannelInvitations().put(channelId, channelId);
 		    }
 		}
 	    }
@@ -96,7 +97,8 @@ public class Init implements IWebSocketMessageHandler {
 		getFriendRequestPs.setLong(1, user.getId());
 		try (ResultSet result = getFriendRequestPs.executeQuery()) {
 		    while (result.next()) {
-                        id.getFriendRequests().add(ClientFriendRequest.map(result));
+                        ClientFriendRequest cfr = ClientFriendRequest.map(result);
+                        id.getFriendRequests().put(cfr.getId(), cfr);
 		    }
 		}
 	    }
@@ -104,7 +106,8 @@ public class Init implements IWebSocketMessageHandler {
 		getRequestedFriendsPs.setLong(1, user.getId());
 		try (ResultSet result = getRequestedFriendsPs.executeQuery()) {
 		    while (result.next()) {
-                        id.getRequestedFriends().add(ClientFriendRequest.map(result));
+                        ClientFriendRequest cfr = ClientFriendRequest.map(result);
+                        id.getRequestedFriends().put(cfr.getId(), cfr);
 		    }
 		}
 	    }
@@ -112,7 +115,8 @@ public class Init implements IWebSocketMessageHandler {
 		getFriendsPs.setLong(1, user.getId());
 		try (ResultSet result = getFriendsPs.executeQuery()) {
 		    while (result.next()) {
-                        id.getFriends().add(result.getLong("target"));
+                        long userId = result.getLong("target");
+                        id.getFriends().put(userId, userId);
 		    }
 		}
 	    }

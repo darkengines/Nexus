@@ -14,19 +14,19 @@ import java.util.HashMap;
  */
 public class InitializationData {
     private HashMap<Long, UserData> users;
-    private ArrayList<ChannelData> channels;
-    private ArrayList<Long> friends;
-    private ArrayList<ClientFriendRequest> friendRequests;
-    private ArrayList<ClientFriendRequest> requestedFriends;
-    private ArrayList<Long> channelInvitations;
+    private HashMap<Long, ChannelData> channels;
+    private HashMap<Long, Long> friends;
+    private HashMap<Long, ClientFriendRequest> friendRequests;
+    private HashMap<Long, ClientFriendRequest> requestedFriends;
+    private HashMap<Long, Long> channelInvitations;
     
     public InitializationData() {
 	users = new HashMap<>();
-	friends = new ArrayList<>();
-	channels = new ArrayList<>();
-	friendRequests = new ArrayList<>();
-	requestedFriends = new ArrayList<>();
-	channelInvitations = new ArrayList<>();
+	friends = new HashMap<>();
+	channels = new HashMap<>();
+	friendRequests = new HashMap<>();
+	requestedFriends = new HashMap<>();
+	channelInvitations = new HashMap<>();
     }
 
     public HashMap<Long, UserData> getUsers() {
@@ -37,43 +37,43 @@ public class InitializationData {
 	this.users = users;
     }
 
-    public ArrayList<ChannelData> getChannels() {
+    public HashMap<Long, ChannelData> getChannels() {
 	return channels;
     }
 
-    public void setChannels(ArrayList<ChannelData> channels) {
+    public void setChannels(HashMap<Long, ChannelData> channels) {
 	this.channels = channels;
     }
 
-    public ArrayList<Long> getFriends() {
+    public HashMap<Long, Long> getFriends() {
 	return friends;
     }
 
-    public void setFriends(ArrayList<Long> friends) {
+    public void setFriends(HashMap<Long, Long> friends) {
 	this.friends = friends;
     }
 
-    public ArrayList<ClientFriendRequest> getFriendRequests() {
+    public HashMap<Long, ClientFriendRequest> getFriendRequests() {
 	return friendRequests;
     }
 
-    public void setFriendRequests(ArrayList<ClientFriendRequest> friendRequests) {
+    public void setFriendRequests(HashMap<Long, ClientFriendRequest> friendRequests) {
 	this.friendRequests = friendRequests;
     }
 
-    public ArrayList<ClientFriendRequest> getRequestedFriends() {
+    public HashMap<Long, ClientFriendRequest> getRequestedFriends() {
 	return requestedFriends;
     }
 
-    public void setRequestedFriends(ArrayList<ClientFriendRequest> requestedFriends) {
+    public void setRequestedFriends(HashMap<Long, ClientFriendRequest> requestedFriends) {
 	this.requestedFriends = requestedFriends;
     }
 
-    public ArrayList<Long> getChannelInvitations() {
+    public HashMap<Long, Long> getChannelInvitations() {
 	return channelInvitations;
     }
 
-    public void setChannelInvitations(ArrayList<Long> channelInvitations) {
+    public void setChannelInvitations(HashMap<Long, Long> channelInvitations) {
 	this.channelInvitations = channelInvitations;
     }
     
