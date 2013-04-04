@@ -40,7 +40,8 @@ public class CreateChannel implements IWebSocketMessageHandler {
 	    participant.setChannelId(channel.getId());
 	    participant.setUserId(user.getId());
 	    ChannelModule.getChannelParticipantRepository().insertChannelParticipant(participant);
-	    WebSocketMessage message = new WebSocketMessage(WebSocketMessageType.CHANNEL, channel);
+	    ChannelData cd = new ChannelData(channel.getId(), channel.getName());
+	    WebSocketMessage message = new WebSocketMessage(WebSocketMessageType.CHANNEL_CREATED, cd);
 	    webSocket.sendMessage(message);
 	} catch (Exception e) {
 	    Logger.getLogger(CreateChannel.class.getName()).log(Level.SEVERE, null, e);

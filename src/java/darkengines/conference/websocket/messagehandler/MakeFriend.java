@@ -63,13 +63,16 @@ public class MakeFriend implements IWebSocketMessageHandler {
 			socket.sendMessage(message);
 		    }
 		} else {
-		    FriendRequestData frd = new FriendRequestData(friendship.getId(), new UserData(user.getId(), user.getDisplayName()));
+		    UserData ud = new UserData(user.getId(), user.getDisplayName());
+		    ud.setOnline(true);
+		    FriendRequestData frd = new FriendRequestData(friendship.getId(), ud);
 		    WebSocketMessage message = new WebSocketMessage(WebSocketMessageType.FRIEND_REQUEST, frd);
 		    for (WebSocket socket : friendSockets) {
 			socket.sendMessage(message);
 		    }
 		    frd.getUser().setId(friend.getId());
 		    frd.getUser().setDisplayName(friend.getDisplayName());
+		    frd.getUser().setOnline(!friendSockets.isEmpty());
 		    message.setType(WebSocketMessageType.FRIEND_REQUESTED);
 		    message.setData(frd);
 		    webSocket.sendMessage(message);

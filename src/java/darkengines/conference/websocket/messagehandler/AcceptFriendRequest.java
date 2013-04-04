@@ -15,6 +15,7 @@ import darkengines.core.websocket.WebSocketMessageType;
 import darkengines.friendship.Friendship;
 import darkengines.friendship.FriendshipModule;
 import darkengines.user.User;
+import darkengines.user.UserModule;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,12 +24,12 @@ import java.util.logging.Logger;
  *
  * @author Quicksort
  */
-public class RejectFriendRequest implements IWebSocketMessageHandler {
+public class AcceptFriendRequest implements IWebSocketMessageHandler {
 
-    private Gson gson;
     private WebSocketManager manager;
+    private Gson gson;
 
-    public RejectFriendRequest(WebSocketManager manager) {
+    public AcceptFriendRequest(WebSocketManager manager) {
 	gson = new Gson();
 	this.manager = manager;
     }
@@ -36,18 +37,21 @@ public class RejectFriendRequest implements IWebSocketMessageHandler {
     @Override
     public void processMessage(User user, WebSocket webSocket, JsonElement data) {
 	try {
-	    Long id = gson.fromJson(data, Long.class);
-	    Friendship friendship = FriendshipModule.getFriendshipRepository().getFriendshipById(id);
-	    if (friendship != null && friendship.getTarget() == user.getId()) {
-		FriendshipModule.getFriendshipRepository().deleteFriendshipById(friendship.getId());
-		WebSocketMessage message = new WebSocketMessage(WebSocketMessageType.FRIEND_REQUEST_REJECTED, friendship.getId());
-		webSocket.sendMessage(message);
-		Collection<WebSocket> sockets = manager.getUserSessions(friendship.getOwner());
-		message.setType(WebSocketMessageType.REJECTED_FRIEND_REQUEST);
-		for (WebSocket socket: sockets) {
-		    socket.sendMessage(message);
-		}
-	    }
+	   long id = gson.fromJson(data, long.class);
+	   Friendship friendship = FriendshipModule.getFriendshipRepository().getFriendshipById(id);
+	   if (friendship != null && friendship.getTarget() == user.getId()) {
+	       Friendship rfriendship = new Friendship();
+	       rfriendship.setOwner(user.getId());
+	       rfriendship.setTarget(friendship.getOwner());
+	       rfriendship = FriendshipModule.getFriendshipRepository().insertFriendship(rfriendship);
+	       Collection<WebSocket> sockets = manager.getUserSessions(friendship.getOwner());
+	       WebSocketMessage message = new WebSocketMessage(WebSocketMessageType.ACCEPTED_FRIEND_REQUEST, friendship.getId());
+	       for (WebSocket socket: sockets) {
+		   socket.sendMessage(message);
+	       }
+	       message.setType(WebSocketMessageType.FRIEND_REQUEST_ACCEPTED);
+	       webSocket.sendMessage(message);
+	   }
 	} catch (Exception e) {
 	    Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
 	}
