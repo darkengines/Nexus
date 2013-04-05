@@ -8,12 +8,15 @@ import darkengines.conference.websocket.messagehandler.getfriendrequests.GetFrie
 import darkengines.conference.websocket.eventlistener.UserConnectedEventListener;
 import darkengines.conference.websocket.eventlistener.UserDisconnectedEventListener;
 import darkengines.conference.websocket.messagehandler.AcceptFriendRequest;
+import darkengines.conference.websocket.messagehandler.AnswerHandler;
+import darkengines.conference.websocket.messagehandler.IceCandidateHandler;
 import darkengines.conference.websocket.messagehandler.SendChatMessage;
 import darkengines.conference.websocket.messagehandler.getfriends.GetFriends;
 import darkengines.conference.websocket.messagehandler.getrequestedfriends.GetRequestedFriends;
 import darkengines.conference.websocket.messagehandler.getuserdata.GetUserData;
 import darkengines.conference.websocket.messagehandler.Init;
 import darkengines.conference.websocket.messagehandler.MakeFriend;
+import darkengines.conference.websocket.messagehandler.OfferHandler;
 import darkengines.conference.websocket.messagehandler.SearchUser;
 import darkengines.conference.websocket.messagehandler.RejectFriendRequest;
 import darkengines.core.websocket.WebSocketFactory;
@@ -52,6 +55,9 @@ public class WebSocket extends WebSocketServlet {
 	webSocketMessageManager.registerMessageHandler(WebSocketMessageType.CHAT_MESSAGE, new SendChatMessage(webSocketManager));
 	webSocketMessageManager.registerMessageHandler(WebSocketMessageType.INIT, new Init(webSocketManager));
 	webSocketMessageManager.registerMessageHandler(WebSocketMessageType.USER_DATA, new GetUserData(webSocketManager));
+	webSocketMessageManager.registerMessageHandler(WebSocketMessageType.OFFER, new OfferHandler(webSocketManager));
+	webSocketMessageManager.registerMessageHandler(WebSocketMessageType.ANSWER, new AnswerHandler(webSocketManager));
+	webSocketMessageManager.registerMessageHandler(WebSocketMessageType.ICE_CANDIDATE, new IceCandidateHandler(webSocketManager));
     }   
     
     @Override
