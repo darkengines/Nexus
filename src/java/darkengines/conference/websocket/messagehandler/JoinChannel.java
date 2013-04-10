@@ -6,6 +6,7 @@ package darkengines.conference.websocket.messagehandler;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import darkengines.channel.Channel;
 import darkengines.channel.ChannelInvitation;
 import darkengines.channel.ChannelModule;
 import darkengines.channel.ChannelParticipant;
@@ -43,36 +44,37 @@ public class JoinChannel implements IWebSocketMessageHandler {
     @Override
     public void processMessage(User user, WebSocket webSocket, JsonElement data) {
 	try (Connection connection = Database.getConnection()) {
-	    long channelId = gson.fromJson(data, Long.class);
-	    ChannelInvitation invitation = ChannelModule.getChannelInvitationRepository().getChannelInvitationByChannelAndUserId(channelId, user.getId());
-	    if (invitation != null) {
-		ChannelParticipant participant = new ChannelParticipant();
-		participant.setChannelId(channelId);
-		participant.setUserId(user.getId());
-		ChannelModule.getChannelParticipantRepository().insertChannelParticipant(participant);
+	    long id = gson.fromJson(data, Long.class);
+	    ChannelInvitation invitation = ChannelModule.getChannelInvitationRepository().getChannelInvitationById(id);
+	    if (invitation != null && user.getId() == invitation.getUserId()) {
+		ChannelParticipantData participant = new ChannelParticipantData();
+		participant.setChannelId(invitation.getChannelId());
+		participant.setUser(new UserData(user));
+		ChannelModule.getChannelParticipantRepository().insertChannelParticipant(new ChannelParticipant(invitation.getChannelId(), invitation.getUserId()));
 		String query = Repository.getQuery("get_channel_users.sql", true, JoinChannel.class);
 		WebSocketMessage message = new WebSocketMessage(WebSocketMessageType.CHANNEL_PARTICIPANT, participant);
 		try (PreparedStatement ps = connection.prepareStatement(query)) {
-		    ps.setLong(1, channelId);
+		    ps.setLong(1, invitation.getChannelId());
 		    try (ResultSet result = ps.executeQuery()) {
-			ArrayList<Friend> friends = new ArrayList<Friend>();
+			ArrayList<UserData> users = new ArrayList<>();
 			while (result.next()) {
-			    friends.add(Friend.map(result));
+			    users.add(UserData.map(result));
 			}
-			for (Friend friend : friends) {
-			    if (friend.getId() != user.getId()) {
-				Collection<WebSocket> sockets = manager.getUserSessions(friend.getId());
-				friend.setOnline(!sockets.isEmpty());
+			for (UserData ud : users) {
+			    if (ud.getId() != user.getId()) {
+				Collection<WebSocket> sockets = manager.getUserSessions(ud.getId());
+				ud.setOnline(!sockets.isEmpty());
 				for (WebSocket socket : sockets) {
 				    socket.sendMessage(message);
 				}
 			    }
 			}
+			Channel channel = ChannelModule.getChannelRepository().getChannelById(invitation.getChannelId());
 			message.setType(WebSocketMessageType.CHANNEL);
 			DetailledChannel dc = new DetailledChannel();
-			dc.setId(channelId);
-			dc.setName("caca");
-			dc.setParticipants(friends);
+			dc.setId(invitation.getChannelId());
+			dc.setName(channel.getName());
+			dc.setParticipants(users);
 			message.setData(dc);
 			webSocket.sendMessage(message);
 		    }

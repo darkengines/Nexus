@@ -6,22 +6,24 @@ package darkengines.conference.websocket.messagehandler;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 
 /**
  *
  * @author Quicksort
  */
 class ChannelData {
+
     private long id;
     private String name;
-    private Collection<Long> participants;
-    private Collection<Long> invitedUsers;
-    
+    private HashMap<Long, Long> participants;
+    private HashMap<Long, Long> invitedUsers;
+
     public ChannelData(long id, String name) {
 	this.id = id;
 	this.name = name;
-	participants = new ArrayList<>();
-	invitedUsers = new ArrayList<>();
+	participants = new HashMap<>();
+	invitedUsers = new HashMap<>();
     }
 
     public long getId() {
@@ -40,19 +42,19 @@ class ChannelData {
 	this.name = name;
     }
 
-    public Collection<Long> getParticipants() {
+    public HashMap<Long, Long> getParticipants() {
 	return participants;
     }
 
-    public void setParticipants(Collection<Long> participants) {
+    public void setParticipants(HashMap<Long, Long> participants) {
 	this.participants = participants;
     }
 
-    public Collection<Long> getInvitedUsers() {
+    public HashMap<Long, Long> getInvitedUsers() {
 	return invitedUsers;
     }
 
-    public void setInvitedUsers(Collection<Long> invitedUsers) {
+    public void setInvitedUsers(HashMap<Long, Long> invitedUsers) {
 	this.invitedUsers = invitedUsers;
     }
     

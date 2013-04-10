@@ -1,0 +1,1 @@
+SELECT id, channel_id, user_id FROM channel_invitation WHERE id=?;

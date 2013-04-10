@@ -89,12 +89,22 @@ public class ChannelInvitationRepository extends Repository<ChannelInvitation>{
 	return channelInvitation;
     }
 
-    public ChannelInvitation getChannelInvitationByChannelAndUserId(long channelId, long id) {
-	throw new UnsupportedOperationException("Not yet implemented");
-    }
-
     public ChannelInvitation getChannelInvitationById(long invitationId) {
-	throw new UnsupportedOperationException("Not yet implemented");
+	ChannelInvitation invitation = null;
+	try (Connection connection = Database.getConnection()) {
+	    String query = getQuery("get_channel_invitation_by_id.sql", true);
+	    try (PreparedStatement ps = connection.prepareStatement(query)) {
+		ps.setObject(1, invitationId);
+		try (ResultSet result = ps.executeQuery()) {
+		    if (result.next()) {
+			invitation = map(result);
+		    }
+		}
+	    }
+	} catch (Exception e) {
+	    Logger.getLogger(ChannelInvitationRepository.class.getName()).log(Level.SEVERE, null, e);
+	}
+	return invitation;
     }
 
     public void deleteChannelInvitationById(long invitationId) {

@@ -49,11 +49,11 @@ public class Init implements IWebSocketMessageHandler {
 	    try (PreparedStatement getUsersPs = connection.prepareStatement(getUsersQuery)) {
 		getUsersPs.setLong(1, user.getId());
 		getUsersPs.setLong(2, user.getId());
-                getUsersPs.setLong(3, user.getId());
-                getUsersPs.setLong(4, user.getId());
+		getUsersPs.setLong(3, user.getId());
+		getUsersPs.setLong(4, user.getId());
 		try (ResultSet result = getUsersPs.executeQuery()) {
 		    while (result.next()) {
-                        UserData ud = UserData.map(result);
+			UserData ud = UserData.map(result);
 			ud.setOnline(!manager.getUserSessions(ud.getId()).isEmpty());
 			id.getUsers().put(ud.getId(), ud);
 		    }
@@ -68,7 +68,10 @@ public class Init implements IWebSocketMessageHandler {
 			    getParticipantsPs.setLong(1, channelData.getId());
 			    try (ResultSet subResult = getParticipantsPs.executeQuery()) {
 				while (subResult.next()) {
-				    channelData.getParticipants().add(subResult.getLong("user_id"));
+				    Long userId = subResult.getLong("user_id");
+				    if (userId != user.getId()) {
+					channelData.getParticipants().put(userId, userId);
+				    }
 				}
 			    }
 			}
@@ -76,7 +79,8 @@ public class Init implements IWebSocketMessageHandler {
 			    getInvitedUsersPs.setLong(1, channelData.getId());
 			    try (ResultSet subResult = getInvitedUsersPs.executeQuery()) {
 				while (subResult.next()) {
-				    channelData.getInvitedUsers().add(subResult.getLong("user_id"));
+				    Long userId = subResult.getLong("user_id");
+				    channelData.getInvitedUsers().put(userId, userId);
 				}
 			    }
 			}
@@ -88,8 +92,8 @@ public class Init implements IWebSocketMessageHandler {
 		getChannelInvitationsPs.setLong(1, user.getId());
 		try (ResultSet result = getChannelInvitationsPs.executeQuery()) {
 		    while (result.next()) {
-                        long channelId = result.getLong("channel_id");
-			id.getChannelInvitations().put(channelId, channelId);
+			ChannelInvitationData cid = ChannelInvitationData.map(result);
+			id.getChannelInvitations().put(cid.getId(), cid);
 		    }
 		}
 	    }
@@ -97,17 +101,17 @@ public class Init implements IWebSocketMessageHandler {
 		getFriendRequestPs.setLong(1, user.getId());
 		try (ResultSet result = getFriendRequestPs.executeQuery()) {
 		    while (result.next()) {
-                        ClientFriendRequest cfr = ClientFriendRequest.map(result);
-                        id.getFriendRequests().put(cfr.getId(), cfr);
+			ClientFriendRequest cfr = ClientFriendRequest.map(result);
+			id.getFriendRequests().put(cfr.getId(), cfr);
 		    }
 		}
 	    }
-            try (PreparedStatement getRequestedFriendsPs = connection.prepareStatement(getRequestedFriendsQuery)) {
+	    try (PreparedStatement getRequestedFriendsPs = connection.prepareStatement(getRequestedFriendsQuery)) {
 		getRequestedFriendsPs.setLong(1, user.getId());
 		try (ResultSet result = getRequestedFriendsPs.executeQuery()) {
 		    while (result.next()) {
-                        ClientFriendRequest cfr = ClientFriendRequest.map(result);
-                        id.getRequestedFriends().put(cfr.getId(), cfr);
+			ClientFriendRequest cfr = ClientFriendRequest.map(result);
+			id.getRequestedFriends().put(cfr.getId(), cfr);
 		    }
 		}
 	    }
@@ -115,8 +119,8 @@ public class Init implements IWebSocketMessageHandler {
 		getFriendsPs.setLong(1, user.getId());
 		try (ResultSet result = getFriendsPs.executeQuery()) {
 		    while (result.next()) {
-                        long userId = result.getLong("target");
-                        id.getFriends().put(userId, userId);
+			long userId = result.getLong("target");
+			id.getFriends().put(userId, userId);
 		    }
 		}
 	    }

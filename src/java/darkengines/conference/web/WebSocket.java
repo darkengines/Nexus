@@ -9,12 +9,15 @@ import darkengines.conference.websocket.eventlistener.UserConnectedEventListener
 import darkengines.conference.websocket.eventlistener.UserDisconnectedEventListener;
 import darkengines.conference.websocket.messagehandler.AcceptFriendRequest;
 import darkengines.conference.websocket.messagehandler.AnswerHandler;
+import darkengines.conference.websocket.messagehandler.ChannelInvitationHandler;
+import darkengines.conference.websocket.messagehandler.CreateChannel;
 import darkengines.conference.websocket.messagehandler.IceCandidateHandler;
 import darkengines.conference.websocket.messagehandler.SendChatMessage;
 import darkengines.conference.websocket.messagehandler.getfriends.GetFriends;
 import darkengines.conference.websocket.messagehandler.getrequestedfriends.GetRequestedFriends;
 import darkengines.conference.websocket.messagehandler.getuserdata.GetUserData;
 import darkengines.conference.websocket.messagehandler.Init;
+import darkengines.conference.websocket.messagehandler.JoinChannel;
 import darkengines.conference.websocket.messagehandler.MakeFriend;
 import darkengines.conference.websocket.messagehandler.OfferHandler;
 import darkengines.conference.websocket.messagehandler.SearchUser;
@@ -58,6 +61,9 @@ public class WebSocket extends WebSocketServlet {
 	webSocketMessageManager.registerMessageHandler(WebSocketMessageType.OFFER, new OfferHandler(webSocketManager));
 	webSocketMessageManager.registerMessageHandler(WebSocketMessageType.ANSWER, new AnswerHandler(webSocketManager));
 	webSocketMessageManager.registerMessageHandler(WebSocketMessageType.ICE_CANDIDATE, new IceCandidateHandler(webSocketManager));
+	webSocketMessageManager.registerMessageHandler(WebSocketMessageType.CREATE_CHANNEL, new CreateChannel());
+	webSocketMessageManager.registerMessageHandler(WebSocketMessageType.CHANNEL_INVITATION, new ChannelInvitationHandler(webSocketManager));
+	webSocketMessageManager.registerMessageHandler(WebSocketMessageType.ACCEPT_CHANNEL_INVITATION, new JoinChannel(webSocketManager));
     }   
     
     @Override

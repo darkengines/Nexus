@@ -86,5 +86,23 @@ public class ChannelRepository extends Repository<Channel> {
 	}
 	return channel;
     }
+
+    public Channel getChannelById(long channelId) {
+	Channel channel = null;
+	try (Connection connection = Database.getConnection()) {
+	    String query = getQuery("get_channel_by_id.sql", true);
+	    try (PreparedStatement ps = connection.prepareStatement(query)) {
+		ps.setObject(1, channelId);
+		try (ResultSet resultSet = ps.executeQuery()) {
+		    if (resultSet.next()) {
+			channel = map(resultSet);
+		    }
+		}
+	    }
+	} catch (Exception e) {
+	    Logger.getLogger(ChannelRepository.class.getName()).log(Level.SEVERE, null, e);
+	}
+	return channel;
+    }
     
 }

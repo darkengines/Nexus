@@ -42,22 +42,24 @@ public class ChannelInvitationHandler implements IWebSocketMessageHandler {
     public void processMessage(User user, WebSocket webSocket, JsonElement data) {
 	try (Connection connection = Database.getConnection()) {
 	    darkengines.channel.ChannelInvitation invitation = gson.fromJson(data, darkengines.channel.ChannelInvitation.class);
-            String query = Repository.getQuery("get_channel_by_participant_and_channel_id.sql", true, darkengines.channel.ChannelInvitation.class);
+            String query = Repository.getQuery("get_channel_by_participant_and_channel_id.sql", true, ChannelInvitationHandler.class);
             try (PreparedStatement ps = connection.prepareStatement(query)) {
                 ps.setLong(2, invitation.getChannelId());
                 ps.setLong(1, user.getId());
                 try (ResultSet result = ps.executeQuery()) {
                     if (result.next()) {
+			String channelName = result.getString("name");
                        User target = UserModule.getUserRepository().getUserById(invitation.getUserId());
                        if (target != null) {
                            invitation = ChannelModule.getChannelInvitationRepository().insertChannelInvitation(invitation);
                            Collection<WebSocket> sockets = manager.getUserSessions(invitation.getUserId());
-                           WebSocketMessage message = new WebSocketMessage(WebSocketMessageType.CHANNEL_INVITATION, invitation);
+			   ChannelInvitationData cid = new ChannelInvitationData(invitation.getId(), invitation.getChannelId(), channelName);
+                           WebSocketMessage message = new WebSocketMessage(WebSocketMessageType.CHANNEL_INVITATION, cid);
                            for (WebSocket socket: sockets) {
                                socket.sendMessage(message);
                            }
 			   message.setType(WebSocketMessageType.CHANNEL_INVITATION_SENT);
-			   message.setData(target);
+			   message.setData(invitation);
 			   webSocket.sendMessage(message);
                        }
                     }

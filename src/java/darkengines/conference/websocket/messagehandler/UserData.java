@@ -4,6 +4,7 @@
  */
 package darkengines.conference.websocket.messagehandler;
 
+import darkengines.user.User;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -19,6 +20,11 @@ public class UserData {
     public UserData(long id, String displayName) {
 	this.id = id;
 	this.displayName = displayName;
+    }
+
+    UserData(User user) {
+	id = user.getId();
+	displayName = user.getDisplayName();
     }
 
     public long getId() {

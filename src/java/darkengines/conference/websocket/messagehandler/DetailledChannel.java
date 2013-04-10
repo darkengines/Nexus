@@ -13,13 +13,13 @@ import java.util.Collection;
  * @author Quicksort
  */
 public class DetailledChannel extends Channel {
-    private Collection<Friend> participants;
+    private Collection<UserData> participants;
 
-    public Collection<Friend> getParticipants() {
+    public Collection<UserData> getParticipants() {
 	return participants;
     }
 
-    public void setParticipants(Collection<Friend> participants) {
+    public void setParticipants(Collection<UserData> participants) {
 	this.participants = participants;
     }
     

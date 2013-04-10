@@ -12,6 +12,15 @@ public class ChannelParticipant {
     private long userId;
     private long channelId;
 
+    public ChannelParticipant(long channelId, long userId) {
+	this.userId = userId;
+	this.channelId = channelId;
+    }
+
+    public ChannelParticipant() {
+	
+    }
+
     public long getUserId() {
 	return userId;
     }
