@@ -14,4 +14,8 @@ UNION
 SELECT u.id, u.display_name FROM friendship AS f1
 RIGHT OUTER JOIN friendship AS f2 ON f1.owner = f2.target AND f1.target = f2.owner
 JOIN `user` AS u ON u.id = f2.target
-WHERE f1.id IS NULL AND f2.owner = ?;
+WHERE f1.id IS NULL AND f2.owner = ?
+UNION
+SELECT u.id, u.display_name FROM channel_invitation AS ci, channel_participant AS cp
+JOIN `user` AS u ON u.id = cp.user_id
+WHERE ci.user_id = ? AND cp.channel_id = ci.channel_id;

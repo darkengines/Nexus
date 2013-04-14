@@ -6,6 +6,7 @@ package darkengines.conference.websocket.messagehandler;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import darkengines.channel.ChannelInvitation;
 import darkengines.core.database.Database;
 import darkengines.core.database.Repository;
 import darkengines.core.websocket.IWebSocketMessageHandler;
@@ -46,11 +47,13 @@ public class Init implements IWebSocketMessageHandler {
 	    String getFriendRequestsQuery = Repository.getQuery("get_friend_requests.sql", true, Init.class);
 	    String getRequestedFriendsQuery = Repository.getQuery("get_requested_friends.sql", true, Init.class);
 	    String getFriendsQuery = Repository.getQuery("get_friends.sql", true, Init.class);
+	    String getAvailableChannelsQuery = Repository.getQuery("get_available_channels.sql", true, Init.class);
 	    try (PreparedStatement getUsersPs = connection.prepareStatement(getUsersQuery)) {
 		getUsersPs.setLong(1, user.getId());
 		getUsersPs.setLong(2, user.getId());
 		getUsersPs.setLong(3, user.getId());
 		getUsersPs.setLong(4, user.getId());
+		getUsersPs.setLong(5, user.getId());
 		try (ResultSet result = getUsersPs.executeQuery()) {
 		    while (result.next()) {
 			UserData ud = UserData.map(result);
@@ -61,6 +64,7 @@ public class Init implements IWebSocketMessageHandler {
 	    }
 	    try (PreparedStatement getChannelsPs = connection.prepareStatement(getChannelsQuery)) {
 		getChannelsPs.setLong(1, user.getId());
+		getChannelsPs.setLong(2, user.getId());
 		try (ResultSet result = getChannelsPs.executeQuery()) {
 		    while (result.next()) {
 			ChannelData channelData = new ChannelData(result.getLong("id"), result.getString("name"));
@@ -79,8 +83,9 @@ public class Init implements IWebSocketMessageHandler {
 			    getInvitedUsersPs.setLong(1, channelData.getId());
 			    try (ResultSet subResult = getInvitedUsersPs.executeQuery()) {
 				while (subResult.next()) {
-				    Long userId = subResult.getLong("user_id");
-				    channelData.getInvitedUsers().put(userId, userId);
+				    ChannelInvitation invitation = ChannelInvitation.map(subResult);
+				    id.getChannelInvitations().put(invitation.getId(), invitation);
+				    channelData.getInvitations().put(invitation.getId(), invitation.getId());
 				}
 			    }
 			}
@@ -88,12 +93,21 @@ public class Init implements IWebSocketMessageHandler {
 		    }
 		}
 	    }
+	    try (PreparedStatement getAvailableChannelsPs = connection.prepareStatement(getAvailableChannelsQuery)) {
+		getAvailableChannelsPs.setLong(1, user.getId());
+		try (ResultSet result = getAvailableChannelsPs.executeQuery()) {
+		    while (result.next()) {
+			long channelId = result.getLong("id");
+			id.getAvailableChannels().put(channelId, channelId);
+		    }
+		}
+	    }
 	    try (PreparedStatement getChannelInvitationsPs = connection.prepareStatement(getChannelInvitationsQuery)) {
 		getChannelInvitationsPs.setLong(1, user.getId());
 		try (ResultSet result = getChannelInvitationsPs.executeQuery()) {
 		    while (result.next()) {
-			ChannelInvitationData cid = ChannelInvitationData.map(result);
-			id.getChannelInvitations().put(cid.getId(), cid);
+			ChannelInvitation invitation = ChannelInvitation.map(result);
+			id.getChannelInvitations().put(invitation.getId(), invitation);
 		    }
 		}
 	    }

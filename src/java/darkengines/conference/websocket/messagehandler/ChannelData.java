@@ -17,13 +17,13 @@ class ChannelData {
     private long id;
     private String name;
     private HashMap<Long, Long> participants;
-    private HashMap<Long, Long> invitedUsers;
+    private HashMap<Long, Long> invitations;
 
     public ChannelData(long id, String name) {
 	this.id = id;
 	this.name = name;
 	participants = new HashMap<>();
-	invitedUsers = new HashMap<>();
+	invitations = new HashMap<>();
     }
 
     public long getId() {
@@ -50,12 +50,12 @@ class ChannelData {
 	this.participants = participants;
     }
 
-    public HashMap<Long, Long> getInvitedUsers() {
-	return invitedUsers;
+    public HashMap<Long, Long> getInvitations() {
+	return invitations;
     }
 
-    public void setInvitedUsers(HashMap<Long, Long> invitedUsers) {
-	this.invitedUsers = invitedUsers;
+    public void setInvitations(HashMap<Long, Long> invitedUsers) {
+	this.invitations = invitedUsers;
     }
     
 }

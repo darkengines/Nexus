@@ -17,6 +17,10 @@ public class UserData {
     private String displayName;
     private boolean online;
     
+    public UserData() {
+	
+    }
+    
     public UserData(long id, String displayName) {
 	this.id = id;
 	this.displayName = displayName;

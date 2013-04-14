@@ -16,9 +16,10 @@ public class InitializationData {
     private HashMap<Long, UserData> users;
     private HashMap<Long, ChannelData> channels;
     private HashMap<Long, Long> friends;
+    private HashMap<Long, Long> availableChannels;
     private HashMap<Long, ClientFriendRequest> friendRequests;
     private HashMap<Long, ClientFriendRequest> requestedFriends;
-    private HashMap<Long, ChannelInvitationData> channelInvitations;
+    private HashMap<Long, ChannelInvitation> channelInvitations;
     
     public InitializationData() {
 	users = new HashMap<>();
@@ -27,6 +28,7 @@ public class InitializationData {
 	friendRequests = new HashMap<>();
 	requestedFriends = new HashMap<>();
 	channelInvitations = new HashMap<>();
+	availableChannels = new HashMap<>();
     }
 
     public HashMap<Long, UserData> getUsers() {
@@ -69,12 +71,20 @@ public class InitializationData {
 	this.requestedFriends = requestedFriends;
     }
 
-    public HashMap<Long, ChannelInvitationData> getChannelInvitations() {
+    public HashMap<Long, ChannelInvitation> getChannelInvitations() {
 	return channelInvitations;
     }
 
-    public void setChannelInvitations(HashMap<Long, ChannelInvitationData> channelInvitations) {
+    public void setChannelInvitations(HashMap<Long, ChannelInvitation> channelInvitations) {
 	this.channelInvitations = channelInvitations;
+    }
+
+    public HashMap<Long, Long> getAvailableChannels() {
+	return availableChannels;
+    }
+
+    public void setAvailableChannels(HashMap<Long, Long> availableChannels) {
+	this.availableChannels = availableChannels;
     }
     
 }

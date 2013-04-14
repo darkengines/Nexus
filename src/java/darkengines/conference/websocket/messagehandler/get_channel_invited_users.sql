@@ -1,3 +1,2 @@
-SELECT u.id AS user_id, ci.id AS id FROM channel_invitation AS ci
-JOIN `user` AS u ON u.id = ci.user_id
-WHERE channel_id = ?;
+SELECT ci.id, ci.user_id, ci.channel_id FROM channel_invitation AS ci
+WHERE ci.channel_id = ?;

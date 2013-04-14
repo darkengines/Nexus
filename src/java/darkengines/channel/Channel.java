@@ -4,11 +4,21 @@
  */
 package darkengines.channel;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 /**
  *
  * @author Quicksort
  */
 public class Channel {
+
+    public static Channel Map(ResultSet result) throws SQLException {
+	Channel channel = new Channel();
+	channel.id = result.getLong("id");
+	channel.name = result.getString("name");
+	return channel;
+    }
     private long id;
     private String name;
 

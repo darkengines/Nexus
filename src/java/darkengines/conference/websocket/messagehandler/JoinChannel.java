@@ -52,7 +52,7 @@ public class JoinChannel implements IWebSocketMessageHandler {
 		participant.setUser(new UserData(user));
 		ChannelModule.getChannelParticipantRepository().insertChannelParticipant(new ChannelParticipant(invitation.getChannelId(), invitation.getUserId()));
 		String query = Repository.getQuery("get_channel_users.sql", true, JoinChannel.class);
-		WebSocketMessage message = new WebSocketMessage(WebSocketMessageType.CHANNEL_PARTICIPANT, participant);
+		WebSocketMessage message = new WebSocketMessage(WebSocketMessageType.ACCEPTED_CHANNEL_INVITATION, invitation.getId());
 		try (PreparedStatement ps = connection.prepareStatement(query)) {
 		    ps.setLong(1, invitation.getChannelId());
 		    try (ResultSet result = ps.executeQuery()) {
@@ -70,12 +70,8 @@ public class JoinChannel implements IWebSocketMessageHandler {
 			    }
 			}
 			Channel channel = ChannelModule.getChannelRepository().getChannelById(invitation.getChannelId());
-			message.setType(WebSocketMessageType.CHANNEL);
-			DetailledChannel dc = new DetailledChannel();
-			dc.setId(invitation.getChannelId());
-			dc.setName(channel.getName());
-			dc.setParticipants(users);
-			message.setData(dc);
+			message.setType(WebSocketMessageType.CHANNEL_INVITATION_ACCEPTED);
+			message.setData(invitation.getId());
 			webSocket.sendMessage(message);
 		    }
 		}
