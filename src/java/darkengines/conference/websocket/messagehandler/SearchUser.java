@@ -37,7 +37,7 @@ public class SearchUser implements IWebSocketMessageHandler {
     }
     
     @Override
-    public void processMessage(User user, WebSocket webSocket, JsonElement data) {
+    public void processMessage(User user, WebSocket webSocket, JsonElement data, long transaction) {
 	try {
 	String raw = gson.fromJson(data, String.class);
 	if (raw.length() > 2) {

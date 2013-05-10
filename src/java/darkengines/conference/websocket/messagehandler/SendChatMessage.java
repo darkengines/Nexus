@@ -32,7 +32,7 @@ public class SendChatMessage implements IWebSocketMessageHandler {
     }
 
     @Override
-    public void processMessage(User user, WebSocket webSocket, JsonElement data) {
+    public void processMessage(User user, WebSocket webSocket, JsonElement data, long transaction) {
         try {
             ChatMessage chatMessage = gson.fromJson(data, ChatMessage.class);
             boolean areFriends = FriendshipModule.getFriendshipRepository().areFriends(user.getId(), chatMessage.getRecipientId());

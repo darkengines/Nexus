@@ -15,6 +15,7 @@ public class Offer {
     private long caller;
     private long callee;
     private long token;
+    private int uniqueId;
     private RTCSessionDescription description;
 
     public long getCaller() {
@@ -47,6 +48,14 @@ public class Offer {
 
     public void setToken(long token) {
 	this.token = token;
+    }
+
+    public int getUniqueId() {
+	return uniqueId;
+    }
+
+    public void setUniqueId(int uniqueId) {
+	this.uniqueId = uniqueId;
     }
     
 }

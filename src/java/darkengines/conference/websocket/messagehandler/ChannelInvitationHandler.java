@@ -41,7 +41,7 @@ public class ChannelInvitationHandler implements IWebSocketMessageHandler {
     }
 
     @Override
-    public void processMessage(User user, WebSocket webSocket, JsonElement data) {
+    public void processMessage(User user, WebSocket webSocket, JsonElement data, long transaction) {
 	DetailledChannelInvitation cdi = new DetailledChannelInvitation();
 	try (Connection connection = Database.getConnection()) {
 	    String checkInvitationQuery = Repository.getQuery("get_channel_by_participant_and_channel_id.sql", true, ChannelInvitationHandler.class);

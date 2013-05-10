@@ -34,7 +34,7 @@ public class RejectFriendRequest implements IWebSocketMessageHandler {
     }
 
     @Override
-    public void processMessage(User user, WebSocket webSocket, JsonElement data) {
+    public void processMessage(User user, WebSocket webSocket, JsonElement data, long transaction) {
 	try {
 	    Long id = gson.fromJson(data, Long.class);
 	    Friendship friendship = FriendshipModule.getFriendshipRepository().getFriendshipById(id);

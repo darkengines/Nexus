@@ -35,7 +35,7 @@ public class RejectChannelInvitation implements IWebSocketMessageHandler{
     }
     
     @Override
-    public void processMessage(User user, WebSocket webSocket, JsonElement data) {
+    public void processMessage(User user, WebSocket webSocket, JsonElement data, long transaction) {
 	try {
 	    long invitationId = gson.fromJson(data, Long.class);
 	    ChannelInvitation invitation = ChannelModule.getChannelInvitationRepository().getChannelInvitationById(invitationId);

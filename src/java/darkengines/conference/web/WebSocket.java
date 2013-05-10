@@ -22,6 +22,7 @@ import darkengines.conference.websocket.messagehandler.MakeFriend;
 import darkengines.conference.websocket.messagehandler.OfferHandler;
 import darkengines.conference.websocket.messagehandler.SearchUser;
 import darkengines.conference.websocket.messagehandler.RejectFriendRequest;
+import darkengines.conference.websocket.messagehandler.SendChannelChatMessage;
 import darkengines.core.websocket.WebSocketFactory;
 import darkengines.core.websocket.WebSocketManager;
 import darkengines.core.websocket.WebSocketMessageManager;
@@ -64,6 +65,7 @@ public class WebSocket extends WebSocketServlet {
 	webSocketMessageManager.registerMessageHandler(WebSocketMessageType.CREATE_CHANNEL, new CreateChannel());
 	webSocketMessageManager.registerMessageHandler(WebSocketMessageType.CHANNEL_INVITATION, new ChannelInvitationHandler(webSocketManager));
 	webSocketMessageManager.registerMessageHandler(WebSocketMessageType.ACCEPT_CHANNEL_INVITATION, new JoinChannel(webSocketManager));
+	webSocketMessageManager.registerMessageHandler(WebSocketMessageType.CHANNEL_CHAT_MESSAGE, new SendChannelChatMessage(webSocketManager));
     }   
     
     @Override

@@ -38,7 +38,7 @@ public class GetChannels implements IWebSocketMessageHandler {
     }
 
     @Override
-    public void processMessage(User user, WebSocket webSocket, JsonElement data) {
+    public void processMessage(User user, WebSocket webSocket, JsonElement data, long transaction) {
 	ArrayList<ChannelData> cds = new ArrayList<ChannelData>();
 	try (Connection connection = Database.getConnection()) {
 	    String query = Repository.getQuery("get_user_channels.sql", true, GetChannels.class);

@@ -36,8 +36,9 @@ public class Init implements IWebSocketMessageHandler {
     }
 
     @Override
-    public void processMessage(User user, WebSocket webSocket, JsonElement data) {
+    public void processMessage(User user, WebSocket webSocket, JsonElement data, long transaction) {
 	InitializationData id = new InitializationData();
+	id.setUniqueId(webSocket.hashCode());
 	try (Connection connection = Database.getConnection()) {
 	    String getUsersQuery = Repository.getQuery("get_related_users.sql", true, Init.class);
 	    String getChannelsQuery = Repository.getQuery("get_user_channels.sql", true, Init.class);
@@ -139,6 +140,7 @@ public class Init implements IWebSocketMessageHandler {
 		}
 	    }
 	    WebSocketMessage message = new WebSocketMessage(WebSocketMessageType.INIT, id);
+	    message.setTransaction(transaction);
 	    webSocket.sendMessage(message);
 	} catch (Exception e) {
 	    Logger.getLogger(Init.class.getName()).log(Level.SEVERE, null, e);

@@ -13,6 +13,6 @@ import darkengines.user.User;
  */
 public interface IWebSocketMessageHandler {
 
-    public void processMessage(User user, WebSocket webSocket, JsonElement data);
+    public void processMessage(User user, WebSocket webSocket, JsonElement data, long transaction);
     
 }

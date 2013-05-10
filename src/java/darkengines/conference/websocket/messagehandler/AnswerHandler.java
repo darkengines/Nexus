@@ -22,7 +22,7 @@ import java.util.logging.Logger;
  * @author Quicksort
  */
 public class AnswerHandler implements IWebSocketMessageHandler {
-    
+
     private WebSocketManager manager;
     private Gson gson;
 
@@ -30,23 +30,24 @@ public class AnswerHandler implements IWebSocketMessageHandler {
 	gson = new Gson();
 	this.manager = manager;
     }
-    
+
     @Override
-    public void processMessage(User user, WebSocket webSocket, JsonElement data) {
+    public void processMessage(User user, WebSocket webSocket, JsonElement data, long transaction) {
 	try {
 	    Offer answer = gson.fromJson(data, Offer.class);
 	    boolean friendship = FriendshipModule.getFriendshipRepository().areFriends(user.getId(), answer.getCaller());
 	    if (friendship) {
 		answer.setCallee(user.getId());
 		Collection<WebSocket> sockets = manager.getUserSessions(answer.getCaller());
-		for (WebSocket socket: sockets) {
-		    WebSocketMessage message = new WebSocketMessage(WebSocketMessageType.ANSWER, answer);
-		    socket.sendMessage(message);
+		for (WebSocket socket : sockets) {
+		    if (socket.hashCode() == answer.getUniqueId()) {
+			WebSocketMessage message = new WebSocketMessage(WebSocketMessageType.ANSWER, answer);
+			socket.sendMessage(message);
+		    }
 		}
 	    }
 	} catch (Exception e) {
 	    Logger.getLogger(OfferHandler.class.getName()).log(Level.SEVERE, null, e);
 	}
     }
-    
 }

@@ -18,10 +18,8 @@ public class WebSocketMessageSerializer implements JsonSerializer<WebSocketMessa
     public JsonElement serialize(WebSocketMessage src, Type typeOfSrc, JsonSerializationContext context) {
 	JsonObject element = new JsonObject();
 	element.addProperty("type", src.getType().toString());
+	element.addProperty("transaction", src.getTransaction());
 	element.add("data", src.getData());
-        if (src.getToken() != null) {
-            element.addProperty("token", src.getToken());
-        }
 	return element;
     }
     

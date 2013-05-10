@@ -20,6 +20,15 @@ public class InitializationData {
     private HashMap<Long, ClientFriendRequest> friendRequests;
     private HashMap<Long, ClientFriendRequest> requestedFriends;
     private HashMap<Long, ChannelInvitation> channelInvitations;
+    private int uniqueId;
+
+    public int getUniqueId() {
+	return uniqueId;
+    }
+
+    public void setUniqueId(int uniqueId) {
+	this.uniqueId = uniqueId;
+    }
     
     public InitializationData() {
 	users = new HashMap<>();

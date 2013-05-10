@@ -30,7 +30,7 @@ public class CreateChannel implements IWebSocketMessageHandler {
     }
     
     @Override
-    public void processMessage(User user, WebSocket webSocket, JsonElement data) {
+    public void processMessage(User user, WebSocket webSocket, JsonElement data, long transaction) {
 	try {
 	    String channelName = gson.fromJson(data, String.class);
 	    Channel channel = new Channel();

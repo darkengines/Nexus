@@ -34,7 +34,7 @@ public class GetFriendRequests implements IWebSocketMessageHandler {
     }
 
     @Override
-    public void processMessage(User user, WebSocket webSocket, JsonElement data) {
+    public void processMessage(User user, WebSocket webSocket, JsonElement data, long transaction) {
 	try (Connection connection = Database.getConnection()) {
 	    try (PreparedStatement ps = connection.prepareStatement(Repository.getQuery("get_friend_requests.sql", true, this.getClass()))) {
 		ps.setLong(1, user.getId());

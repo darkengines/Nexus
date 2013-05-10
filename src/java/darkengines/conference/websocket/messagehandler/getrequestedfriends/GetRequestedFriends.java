@@ -34,7 +34,7 @@ public class GetRequestedFriends implements IWebSocketMessageHandler {
         gson = new Gson();
     }
     @Override
-    public void processMessage(User user, WebSocket webSocket, JsonElement data) {
+    public void processMessage(User user, WebSocket webSocket, JsonElement data, long transaction) {
         ArrayList<Friend> requestedFriends = new ArrayList<Friend>();
         try(Connection connection = Database.getConnection()) {
             String request = Repository.getQuery("get_requested_friends.sql", true, GetRequestedFriends.class);

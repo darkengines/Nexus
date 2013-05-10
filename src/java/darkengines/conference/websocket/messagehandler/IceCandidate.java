@@ -16,6 +16,7 @@ public class IceCandidate {
     private long author;
     private long recipient;
     private long token;
+    private int uniqueId;
     private RTCIceCandidate iceCandidate;
 
     public long getAuthor() {
@@ -49,5 +50,12 @@ public class IceCandidate {
     public void setToken(long token) {
 	this.token = token;
     }
-    
+
+    public int getUniqueId() {
+	return uniqueId;
+    }
+
+    public void setUniqueId(int uniqueId) {
+	this.uniqueId = uniqueId;
+    }
 }

@@ -35,7 +35,7 @@ public class GetUserData implements IWebSocketMessageHandler {
     }
 
     @Override
-    public void processMessage(User user, WebSocket webSocket, JsonElement data) {
+    public void processMessage(User user, WebSocket webSocket, JsonElement data, long transaction) {
 	try (Connection connection = Database.getConnection()) {
 	    long id = gson.fromJson(data, Long.class);
 	    String query = Repository.getQuery("get_user_data.sql", true, GetUserData.class);

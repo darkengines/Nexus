@@ -33,12 +33,13 @@ public class OfferHandler implements IWebSocketMessageHandler {
     }
 
     @Override
-    public void processMessage(User user, WebSocket webSocket, JsonElement data) {
+    public void processMessage(User user, WebSocket webSocket, JsonElement data, long transaction) {
 	try {
 	    Offer offer = gson.fromJson(data, Offer.class);
 	    boolean friendship = FriendshipModule.getFriendshipRepository().areFriends(user.getId(), offer.getCallee());
 	    if (friendship) {
 		offer.setCaller(user.getId());
+		offer.setUniqueId(webSocket.hashCode());
 		Collection<WebSocket> sockets = manager.getUserSessions(offer.getCallee());
 		for (WebSocket socket: sockets) {
 		    WebSocketMessage message = new WebSocketMessage(WebSocketMessageType.OFFER, offer);

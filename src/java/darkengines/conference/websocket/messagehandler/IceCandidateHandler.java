@@ -21,7 +21,8 @@ import java.util.logging.Logger;
  *
  * @author Quicksort
  */
-public class IceCandidateHandler implements IWebSocketMessageHandler{
+public class IceCandidateHandler implements IWebSocketMessageHandler {
+
     private WebSocketManager manager;
     private Gson gson;
 
@@ -29,18 +30,20 @@ public class IceCandidateHandler implements IWebSocketMessageHandler{
 	gson = new Gson();
 	this.manager = manager;
     }
-    
+
     @Override
-    public void processMessage(User user, WebSocket webSocket, JsonElement data) {
+    public void processMessage(User user, WebSocket webSocket, JsonElement data, long transaction) {
 	try {
 	    IceCandidate iceCandidate = gson.fromJson(data, IceCandidate.class);
 	    boolean friendship = FriendshipModule.getFriendshipRepository().areFriends(user.getId(), iceCandidate.getRecipient());
 	    if (friendship) {
 		iceCandidate.setAuthor(user.getId());
 		Collection<WebSocket> sockets = manager.getUserSessions(iceCandidate.getRecipient());
-		for (WebSocket socket: sockets) {
-		    WebSocketMessage message = new WebSocketMessage(WebSocketMessageType.ICE_CANDIDATE, iceCandidate);
-		    socket.sendMessage(message);
+		for (WebSocket socket : sockets) {
+		    if (socket.hashCode() == iceCandidate.getUniqueId()) {
+			WebSocketMessage message = new WebSocketMessage(WebSocketMessageType.ICE_CANDIDATE, iceCandidate);
+			socket.sendMessage(message);
+		    }
 		}
 	    }
 	} catch (Exception e) {

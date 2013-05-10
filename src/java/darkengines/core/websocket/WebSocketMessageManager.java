@@ -21,7 +21,7 @@ public class WebSocketMessageManager {
     }
     public void processMessage(User user, WebSocket webSocket, WebSocketMessage message) {
 	if (handlers.containsKey(message.getType())) {
-	    handlers.get(message.getType()).processMessage(user, webSocket, message.getData());
+	    handlers.get(message.getType()).processMessage(user, webSocket, message.getData(), message.getTransaction());
 	}
     }
 }

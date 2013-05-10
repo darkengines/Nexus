@@ -14,8 +14,23 @@ public class WebSocketMessage {
     private static Gson gson = new Gson();
     private WebSocketMessageType type;
     private JsonElement data;
-    private Long token;
+    private long transaction;
 
+    public static Gson getGson() {
+	return gson;
+    }
+
+    public static void setGson(Gson gson) {
+	WebSocketMessage.gson = gson;
+    }
+
+    public long getTransaction() {
+	return transaction;
+    }
+
+    public void setTransaction(long transaction) {
+	this.transaction = transaction;
+    }
     public WebSocketMessage() {
 	
     }
@@ -47,21 +62,4 @@ public class WebSocketMessage {
     public void setData(Object data) {
 	this.data = gson.toJsonTree(data);
     }
-
-    public static Gson getGson() {
-        return gson;
-    }
-
-    public static void setGson(Gson gson) {
-        WebSocketMessage.gson = gson;
-    }
-
-    public Long getToken() {
-        return token;
-    }
-
-    public void setToken(Long token) {
-        this.token = token;
-    }
-    
 }

@@ -35,7 +35,7 @@ public class MakeFriend implements IWebSocketMessageHandler {
     }
 
     @Override
-    public void processMessage(User user, WebSocket webSocket, JsonElement data) {
+    public void processMessage(User user, WebSocket webSocket, JsonElement data, long transaction) {
 	try {
 	    Long id = gson.fromJson(data, Long.class);
 	    Friend friend = new Friend(UserModule.getUserRepository().getUserById(id));
