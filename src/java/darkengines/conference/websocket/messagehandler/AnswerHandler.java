@@ -38,9 +38,11 @@ public class AnswerHandler implements IWebSocketMessageHandler {
 	    boolean friendship = FriendshipModule.getFriendshipRepository().areFriends(user.getId(), answer.getCaller());
 	    if (friendship) {
 		answer.setCallee(user.getId());
+		int uid = webSocket.hashCode();
 		Collection<WebSocket> sockets = manager.getUserSessions(answer.getCaller());
 		for (WebSocket socket : sockets) {
 		    if (socket.hashCode() == answer.getUniqueId()) {
+			answer.setUniqueId(uid);
 			WebSocketMessage message = new WebSocketMessage(WebSocketMessageType.ANSWER, answer);
 			socket.sendMessage(message);
 		    }

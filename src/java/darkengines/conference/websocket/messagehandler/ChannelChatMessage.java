@@ -9,13 +9,32 @@ package darkengines.conference.websocket.messagehandler;
  * @author Quicksort
  */
 class ChannelChatMessage {
+    long id;
+    long authorId;
+    long channelId;
 
-    long getchannelId() {
-	throw new UnsupportedOperationException("Not yet implemented");
+    public long getChannelId() {
+	return channelId;
     }
 
-    void setAuthorId(long id) {
-	throw new UnsupportedOperationException("Not yet implemented");
+    public void setChannelId(long channelId) {
+	this.channelId = channelId;
     }
-    
+
+    public long getId() {
+	return id;
+    }
+
+    public void setId(long id) {
+	this.id = id;
+    }
+
+    public long getAuthorId() {
+	return authorId;
+    }
+
+    public void setAuthorId(long authorId) {
+	this.authorId = authorId;
+    }
+        
 }

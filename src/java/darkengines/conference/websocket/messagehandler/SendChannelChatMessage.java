@@ -44,16 +44,16 @@ public class SendChannelChatMessage implements IWebSocketMessageHandler {
 	    String getParticipantsQuery = Repository.getQuery("get_channel_participants.sql", true, SendChannelChatMessage.class);
 	    try (PreparedStatement ps = connection.prepareStatement(checkQuery)) {
 		ps.setLong(1, user.getId());
-		ps.setLong(2, msg.getchannelId());
+		ps.setLong(2, msg.getChannelId());
 		try (ResultSet result = ps.executeQuery()) {
 		    inChannel = result.next();
 		}
 	    }
 	    if (inChannel) {
-		WebSocketMessage message = new WebSocketMessage(WebSocketMessageType.CHANNEL_CHAT_MESSAGE, msg);
 		msg.setAuthorId(user.getId());
+		WebSocketMessage message = new WebSocketMessage(WebSocketMessageType.CHANNEL_CHAT_MESSAGE, msg);
 		try (PreparedStatement ps = connection.prepareStatement(getParticipantsQuery)) {
-		    ps.setLong(1, msg.getchannelId());
+		    ps.setLong(1, msg.getChannelId());
 		    try (ResultSet result = ps.executeQuery()) {
 			while (result.next()) {
 			    long id = result.getLong("user_id");
@@ -64,7 +64,6 @@ public class SendChannelChatMessage implements IWebSocketMessageHandler {
 			}
 		    }
 		}
-		webSocket.sendMessage(message);
 	    }
 	} catch (Exception e) {
 	    Logger.getLogger(SendChannelChatMessage.class.getName()).log(Level.SEVERE, null, e);
