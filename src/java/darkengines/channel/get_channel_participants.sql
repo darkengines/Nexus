@@ -1,0 +1,1 @@
+SELECT user_id FROM channel_participant WHERE channel_id=?;

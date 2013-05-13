@@ -83,8 +83,41 @@ public class ChannelParticipantRepository extends Repository<ChannelParticipant>
 	}
 	return channelParticipant;
     }
-
-    public ArrayList<ChannelParticipant> getChannelParticipants(long channelId) {
-	throw new UnsupportedOperationException("Not yet implemented");
+    
+    public boolean isParticipant(long channelId, long user_id) {
+	try (Connection connection = Database.getConnection()) {
+	    String query = getQuery("is_participant.sql", true);
+	    try (PreparedStatement ps = connection.prepareStatement(query)) {
+		ps.setObject(1, channelId);
+		ps.setObject(2, user_id);
+		try (ResultSet result = ps.executeQuery()) {
+		    if (result.next()) {
+			return result.getBoolean("is_participant");
+		    }
+		    return false;
+		}
+	    }
+	} catch (Exception e) {
+	    Logger.getLogger(ChannelParticipantRepository.class.getName()).log(Level.SEVERE, null, e);
+	}
+	return false;
+    }
+    
+    public ArrayList<Long> getChannelParticipants(long channelId) {
+	ArrayList<Long> ids = new ArrayList<>();
+	try (Connection connection = Database.getConnection()) {
+	    String query = getQuery("get_channel_participants.sql", true);
+	    try (PreparedStatement ps = connection.prepareStatement(query)) {
+		ps.setObject(1, channelId);
+		try (ResultSet result = ps.executeQuery()) {
+		    while (result.next()) {
+			ids.add(result.getLong("user_id"));
+		    }
+		}
+	    }
+	} catch (Exception e) {
+	    Logger.getLogger(ChannelParticipantRepository.class.getName()).log(Level.SEVERE, null, e);
+	}
+	return ids;
     }
 }

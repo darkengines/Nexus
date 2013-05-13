@@ -21,12 +21,12 @@ import java.util.logging.Logger;
  *
  * @author Quicksort
  */
-public class IceCandidateHandler implements IWebSocketMessageHandler {
+public class Answer implements IWebSocketMessageHandler {
 
     private WebSocketManager manager;
     private Gson gson;
 
-    public IceCandidateHandler(WebSocketManager manager) {
+    public Answer(WebSocketManager manager) {
 	gson = new Gson();
 	this.manager = manager;
     }
@@ -34,20 +34,17 @@ public class IceCandidateHandler implements IWebSocketMessageHandler {
     @Override
     public void processMessage(User user, WebSocket webSocket, JsonElement data, long transaction) {
 	try {
-	    IceCandidate iceCandidate = gson.fromJson(data, IceCandidate.class);
-	    boolean friendship = FriendshipModule.getFriendshipRepository().areFriends(user.getId(), iceCandidate.getRecipient());
+	    OfferData answer = gson.fromJson(data, OfferData.class);
+	    boolean friendship = FriendshipModule.getFriendshipRepository().areFriends(user.getId(), answer.getUserId());
 	    if (friendship) {
-		iceCandidate.setAuthor(user.getId());
-		Collection<WebSocket> sockets = manager.getUserSessions(iceCandidate.getRecipient());
-		for (WebSocket socket : sockets) {
-		    if (socket.hashCode() == iceCandidate.getUniqueId()) {
-			WebSocketMessage message = new WebSocketMessage(WebSocketMessageType.ICE_CANDIDATE, iceCandidate);
-			socket.sendMessage(message);
-		    }
-		}
+		WebSocket socket  = manager.getUserSession(answer.getUserId(), answer.getSocketId());
+		answer.setUserId(user.getId());
+		answer.setSocketId(webSocket.hashCode());
+		WebSocketMessage message = new WebSocketMessage(WebSocketMessageType.ANSWER, answer);
+		socket.sendMessage(message);
 	    }
 	} catch (Exception e) {
-	    Logger.getLogger(Offer.class.getName()).log(Level.SEVERE, null, e);
+	    Logger.getLogger(Answer.class.getName()).log(Level.SEVERE, null, e);
 	}
     }
 }

@@ -6,6 +6,7 @@ package darkengines.conference.websocket.messagehandler;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import darkengines.channel.ChannelModule;
 import darkengines.core.websocket.IWebSocketMessageHandler;
 import darkengines.core.websocket.WebSocket;
 import darkengines.core.websocket.WebSocketManager;
@@ -21,33 +22,33 @@ import java.util.logging.Logger;
  *
  * @author Quicksort
  */
-public class IceCandidateHandler implements IWebSocketMessageHandler {
+public class ChannelOffer implements IWebSocketMessageHandler {
 
     private WebSocketManager manager;
     private Gson gson;
 
-    public IceCandidateHandler(WebSocketManager manager) {
-	gson = new Gson();
+    public ChannelOffer(WebSocketManager manager) {
 	this.manager = manager;
+	gson = new Gson();
     }
 
     @Override
     public void processMessage(User user, WebSocket webSocket, JsonElement data, long transaction) {
 	try {
-	    IceCandidate iceCandidate = gson.fromJson(data, IceCandidate.class);
-	    boolean friendship = FriendshipModule.getFriendshipRepository().areFriends(user.getId(), iceCandidate.getRecipient());
-	    if (friendship) {
-		iceCandidate.setAuthor(user.getId());
-		Collection<WebSocket> sockets = manager.getUserSessions(iceCandidate.getRecipient());
-		for (WebSocket socket : sockets) {
-		    if (socket.hashCode() == iceCandidate.getUniqueId()) {
-			WebSocketMessage message = new WebSocketMessage(WebSocketMessageType.ICE_CANDIDATE, iceCandidate);
-			socket.sendMessage(message);
-		    }
+	    ChannelOfferData offer = gson.fromJson(data, ChannelOfferData.class);
+	    boolean isParticipant = ChannelModule.getChannelParticipantRepository().isParticipant(user.getId(), offer.getUserId());
+	    if (isParticipant) {
+		Collection<Long> participants = ChannelModule.getChannelParticipantRepository().getChannelParticipants(offer.getChannelId());
+		Collection<WebSocket> sockets = manager.getUsersSessions(participants);
+		offer.setUserId(user.getId());
+		offer.setSocketId(webSocket.hashCode());
+		WebSocketMessage message = new WebSocketMessage(WebSocketMessageType.CHANNEL_OFFER, offer);
+		for (WebSocket socket: sockets) {
+		    socket.sendMessage(message);
 		}
 	    }
 	} catch (Exception e) {
-	    Logger.getLogger(Offer.class.getName()).log(Level.SEVERE, null, e);
+	    Logger.getLogger(ChannelOffer.class.getName()).log(Level.SEVERE, null, e);
 	}
     }
 }

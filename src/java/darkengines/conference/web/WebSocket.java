@@ -8,7 +8,7 @@ import darkengines.conference.websocket.messagehandler.getfriendrequests.GetFrie
 import darkengines.conference.websocket.eventlistener.UserConnectedEventListener;
 import darkengines.conference.websocket.eventlistener.UserDisconnectedEventListener;
 import darkengines.conference.websocket.messagehandler.AcceptFriendRequest;
-import darkengines.conference.websocket.messagehandler.AnswerHandler;
+import darkengines.conference.websocket.messagehandler.Answer;
 import darkengines.conference.websocket.messagehandler.ChannelInvitationHandler;
 import darkengines.conference.websocket.messagehandler.CreateChannel;
 import darkengines.conference.websocket.messagehandler.IceCandidateHandler;
@@ -19,7 +19,7 @@ import darkengines.conference.websocket.messagehandler.getuserdata.GetUserData;
 import darkengines.conference.websocket.messagehandler.Init;
 import darkengines.conference.websocket.messagehandler.JoinChannel;
 import darkengines.conference.websocket.messagehandler.MakeFriend;
-import darkengines.conference.websocket.messagehandler.OfferHandler;
+import darkengines.conference.websocket.messagehandler.Offer;
 import darkengines.conference.websocket.messagehandler.SearchUser;
 import darkengines.conference.websocket.messagehandler.RejectFriendRequest;
 import darkengines.conference.websocket.messagehandler.SendChannelChatMessage;
@@ -59,8 +59,8 @@ public class WebSocket extends WebSocketServlet {
 	webSocketMessageManager.registerMessageHandler(WebSocketMessageType.CHAT_MESSAGE, new SendChatMessage(webSocketManager));
 	webSocketMessageManager.registerMessageHandler(WebSocketMessageType.INIT, new Init(webSocketManager));
 	webSocketMessageManager.registerMessageHandler(WebSocketMessageType.USER_DATA, new GetUserData(webSocketManager));
-	webSocketMessageManager.registerMessageHandler(WebSocketMessageType.OFFER, new OfferHandler(webSocketManager));
-	webSocketMessageManager.registerMessageHandler(WebSocketMessageType.ANSWER, new AnswerHandler(webSocketManager));
+	webSocketMessageManager.registerMessageHandler(WebSocketMessageType.OFFER, new Offer(webSocketManager));
+	webSocketMessageManager.registerMessageHandler(WebSocketMessageType.ANSWER, new Answer(webSocketManager));
 	webSocketMessageManager.registerMessageHandler(WebSocketMessageType.ICE_CANDIDATE, new IceCandidateHandler(webSocketManager));
 	webSocketMessageManager.registerMessageHandler(WebSocketMessageType.CREATE_CHANNEL, new CreateChannel());
 	webSocketMessageManager.registerMessageHandler(WebSocketMessageType.CHANNEL_INVITATION, new ChannelInvitationHandler(webSocketManager));

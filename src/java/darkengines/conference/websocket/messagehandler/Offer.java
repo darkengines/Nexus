@@ -1,61 +1,49 @@
-package darkengines.conference.websocket.messagehandler;
-
-import darkengines.core.WRTC.PeerToPeerConnection.RTCSessionDescription;
-
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+package darkengines.conference.websocket.messagehandler;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import darkengines.core.websocket.IWebSocketMessageHandler;
+import darkengines.core.websocket.WebSocket;
+import darkengines.core.websocket.WebSocketManager;
+import darkengines.core.websocket.WebSocketMessage;
+import darkengines.core.websocket.WebSocketMessageType;
+import darkengines.friendship.FriendshipModule;
+import darkengines.user.User;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Quicksort
  */
-public class Offer {
-    private long caller;
-    private long callee;
-    private long token;
-    private int uniqueId;
-    private RTCSessionDescription description;
+public class Offer implements IWebSocketMessageHandler {
 
-    public long getCaller() {
-	return caller;
+    private WebSocketManager manager;
+    private Gson gson;
+
+    public Offer(WebSocketManager manager) {
+	this.manager = manager;
+	gson = new Gson();
     }
 
-    public void setCaller(long caller) {
-	this.caller = caller;
+    @Override
+    public void processMessage(User user, WebSocket webSocket, JsonElement data, long transaction) {
+	try {
+	    OfferData offer = gson.fromJson(data, OfferData.class);
+	    boolean friendship = FriendshipModule.getFriendshipRepository().areFriends(user.getId(), offer.getUserId());
+	    if (friendship) {
+		WebSocket socket = manager.getUserSession(offer.getUserId(), offer.getSocketId());
+		offer.setUserId(user.getId());
+		offer.setSocketId(webSocket.hashCode());
+		WebSocketMessage message = new WebSocketMessage(WebSocketMessageType.OFFER, offer);
+		socket.sendMessage(message);
+	    }
+	} catch (Exception e) {
+	    Logger.getLogger(Offer.class.getName()).log(Level.SEVERE, null, e);
+	}
     }
-
-    public long getCallee() {
-	return callee;
-    }
-
-    public void setCallee(long callee) {
-	this.callee = callee;
-    }
-
-    public RTCSessionDescription getDescription() {
-	return description;
-    }
-
-    public void setDescription(RTCSessionDescription description) {
-	this.description = description;
-    }
-
-    public long getToken() {
-	return token;
-    }
-
-    public void setToken(long token) {
-	this.token = token;
-    }
-
-    public int getUniqueId() {
-	return uniqueId;
-    }
-
-    public void setUniqueId(int uniqueId) {
-	this.uniqueId = uniqueId;
-    }
-    
 }

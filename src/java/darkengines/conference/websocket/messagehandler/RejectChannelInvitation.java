@@ -41,10 +41,10 @@ public class RejectChannelInvitation implements IWebSocketMessageHandler{
 	    ChannelInvitation invitation = ChannelModule.getChannelInvitationRepository().getChannelInvitationById(invitationId);
 	    if (invitation != null && invitation.getUserId() == user.getId()) {
 		ChannelModule.getChannelInvitationRepository().deleteChannelInvitationById(invitationId);
-		ArrayList<ChannelParticipant> participants = ChannelModule.getChannelParticipantRepository().getChannelParticipants(invitation.getChannelId());
+		ArrayList<Long> participants = ChannelModule.getChannelParticipantRepository().getChannelParticipants(invitation.getChannelId());
 		WebSocketMessage message = new WebSocketMessage(WebSocketMessageType.CHANNEL_INVITATION_REJECTED, invitation);
-		for (ChannelParticipant participant: participants) {
-		    Collection<WebSocket> sockets = manager.getUserSessions(participant.getUserId());
+		for (Long participant: participants) {
+		    Collection<WebSocket> sockets = manager.getUserSessions(participant);
 		    for (WebSocket socket: sockets) {
 			socket.sendMessage(message);
 		    }
