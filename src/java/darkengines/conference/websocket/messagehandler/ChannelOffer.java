@@ -36,16 +36,13 @@ public class ChannelOffer implements IWebSocketMessageHandler {
     public void processMessage(User user, WebSocket webSocket, JsonElement data, long transaction) {
 	try {
 	    ChannelOfferData offer = gson.fromJson(data, ChannelOfferData.class);
-	    boolean isParticipant = ChannelModule.getChannelParticipantRepository().isParticipant(user.getId(), offer.getUserId());
+	    boolean isParticipant = ChannelModule.getChannelParticipantRepository().isParticipant(offer.getChannelId(), user.getId());
 	    if (isParticipant) {
-		Collection<Long> participants = ChannelModule.getChannelParticipantRepository().getChannelParticipants(offer.getChannelId());
-		Collection<WebSocket> sockets = manager.getUsersSessions(participants);
+		WebSocket socket = manager.getUserSession(offer.getUserId(), offer.getSocketId());
 		offer.setUserId(user.getId());
 		offer.setSocketId(webSocket.hashCode());
 		WebSocketMessage message = new WebSocketMessage(WebSocketMessageType.CHANNEL_OFFER, offer);
-		for (WebSocket socket: sockets) {
-		    socket.sendMessage(message);
-		}
+		socket.sendMessage(message);
 	    }
 	} catch (Exception e) {
 	    Logger.getLogger(ChannelOffer.class.getName()).log(Level.SEVERE, null, e);

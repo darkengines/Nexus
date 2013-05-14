@@ -34,17 +34,14 @@ public class ChannelIceCandidate implements IWebSocketMessageHandler {
     @Override
     public void processMessage(User user, WebSocket webSocket, JsonElement data, long transaction) {
 	try {
-	    IceCandidate iceCandidate = gson.fromJson(data, IceCandidate.class);
-	    boolean friendship = FriendshipModule.getFriendshipRepository().areFriends(user.getId(), iceCandidate.getRecipient());
+	    ChannelIceCandidateData iceCandidate = gson.fromJson(data, ChannelIceCandidateData.class);
+	    boolean friendship = FriendshipModule.getFriendshipRepository().areFriends(user.getId(), iceCandidate.getUserId());
 	    if (friendship) {
-		iceCandidate.setAuthor(user.getId());
-		Collection<WebSocket> sockets = manager.getUserSessions(iceCandidate.getRecipient());
-		for (WebSocket socket : sockets) {
-		    if (socket.hashCode() == iceCandidate.getUniqueId()) {
-			WebSocketMessage message = new WebSocketMessage(WebSocketMessageType.CHANNEL_ICE_CANDIDATE, iceCandidate);
-			socket.sendMessage(message);
-		    }
-		}
+		WebSocket socket = manager.getUserSession(iceCandidate.getUserId(), iceCandidate.getSocketId());
+                iceCandidate.setUserId(user.getId());
+                iceCandidate.setSocketId(socket.hashCode());
+		WebSocketMessage message = new WebSocketMessage(WebSocketMessageType.CHANNEL_ICE_CANDIDATE, iceCandidate);
+		socket.sendMessage(message);
 	    }
 	} catch (Exception e) {
 	    Logger.getLogger(Offer.class.getName()).log(Level.SEVERE, null, e);

@@ -1,1 +1,0 @@
-SELECT COUNT(user_id) AS is_participant > 0 FROM channel_participant WHERE channel_id=? AND user_id=?;
