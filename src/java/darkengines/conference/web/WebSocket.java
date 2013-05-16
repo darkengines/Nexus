@@ -16,6 +16,7 @@ import darkengines.conference.websocket.messagehandler.ChannelIceCandidate;
 import darkengines.conference.websocket.messagehandler.ChannelInvitationHandler;
 import darkengines.conference.websocket.messagehandler.ChannelOffer;
 import darkengines.conference.websocket.messagehandler.CreateChannel;
+import darkengines.conference.websocket.messagehandler.HangUp;
 import darkengines.conference.websocket.messagehandler.IceCandidate;
 import darkengines.conference.websocket.messagehandler.SendChatMessage;
 import darkengines.conference.websocket.messagehandler.getfriends.GetFriends;
@@ -76,6 +77,7 @@ public class WebSocket extends WebSocketServlet {
         webSocketMessageManager.registerMessageHandler(WebSocketMessageType.CHANNEL_OFFER, new ChannelOffer(webSocketManager));
 	webSocketMessageManager.registerMessageHandler(WebSocketMessageType.CHANNEL_ANSWER, new ChannelAnswer(webSocketManager));
         webSocketMessageManager.registerMessageHandler(WebSocketMessageType.CHANNEL_ICE_CANDIDATE, new ChannelIceCandidate(webSocketManager));
+	webSocketMessageManager.registerMessageHandler(WebSocketMessageType.HANGUP, new HangUp(webSocketManager));
     }   
     
     @Override
